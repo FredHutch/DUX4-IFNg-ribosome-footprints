@@ -1,6 +1,7 @@
 This is the work-in-progress repo for the ribosome footprints and traslation efficiency analysis supporitng the manuscript _DUX4 orchestrates translational reprograming by broadly suppressing translation efficiency_. This repo hosts a [gitbook](https://FredHutch.github.io/DUX4-IFNg-ribosome-footprints), bulit with [bookdown](https://bookdown.org/), containing detailed description of the analysis and R code that reproduces the results and figures on the fly.  
 
-## Samples
+## Samples and treatments
+The translation efficiency was calculated by Ribo-seq and RNA-seq samples, and each of the platform consisted with triplicates of untreated, IFN-gamma, DUX4, and DUX4+INF-gamma treated.
 
 ## Softwear requirement
 * R (>=4.0.3): the tidyverse project, knitr, bookdown, rmarkdown
@@ -23,6 +24,6 @@ This directory contains all the R code and shell scripts performing the bioinfor
 This directory includes the orginal R markdown and related files that made the gitbook. The code in the Rmd files were orgainzed, readable and can reproduce the results and figures for the manuscript.
 
 ### docs
-This directory for the gitbook, made of the HTML pages randered by the files in the _gitbook_ directory and [bookdown](https://bookdown.org).
+This directory for the [gitbook](https://FredHutch.github.io/DUX4-IFNg-ribosome-footprints), made of the HTML pages randered by the files in the _gitbook_ directory and [bookdown](https://bookdown.org).
 
 
