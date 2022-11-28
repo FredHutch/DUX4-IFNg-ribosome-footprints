@@ -1,0 +1,43 @@
+bookdown::bs4_book:
+  css: style.css
+  theme:
+    primary: "#4D6F8D"
+    base_font: 
+      google: Sen
+    heading_font:
+      google:
+        family: Bitter
+        wght: 200
+    code_font:
+      google: 
+        # arguments to sass::font_google() 
+        family: DM Mono
+        local: false  
+  repo: 
+    base: https://github.com/FredHutch/DUX4-IFNg-ribosome-footprints
+    branch: main
+    subdir: book
+    icon: "fas fa-air-freshener"
+bookdown::gitbook:
+  css: style.css
+  includes:
+    in_header: [ga_script.html]
+  config:
+    toc:
+      collapse: section
+      before: |
+        <li><a href="./">DUX4-IFNg-ribosome-footprints</a></li>
+    edit: https://github.com/FredHutch/DUX4-IFNg-ribosome-footprints/edit/main/%s
+    download: []
+    sharing:
+      facebook: no
+      twitter: no
+      github: yes
+      all: []    
+bookdown::pdf_book:
+  includes:
+    in_header: preamble.tex
+  latex_engine: xelatex
+  citation_package: natbib
+  keep_tex: yes
+bookdown::epub_book: default
