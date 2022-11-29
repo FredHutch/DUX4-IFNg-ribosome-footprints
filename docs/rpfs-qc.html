@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Chapter 3 Ribosome footprints quality control | DUX4 ribosome footprints profiling and translation efficiency</title>
+<meta name="author" content="Chao-Jen Wong">
+<meta name="description" content="In this chapter, we assessed the quality of the ribosome footprints (RPFs) in several aspects by using Bioconductor’s ribosomeProfilingQC package and the in-hoouse ad-hoc functions. The aspects...">
+<meta name="generator" content="bookdown 0.30 with bs4_book()">
+<meta property="og:title" content="Chapter 3 Ribosome footprints quality control | DUX4 ribosome footprints profiling and translation efficiency">
+<meta property="og:type" content="book">
+<meta property="og:url" content="https://FredHutch.github.io/DUX4-IFNg-ribosome-footprints/rpfs-qc.html">
+<meta property="og:description" content="In this chapter, we assessed the quality of the ribosome footprints (RPFs) in several aspects by using Bioconductor’s ribosomeProfilingQC package and the in-hoouse ad-hoc functions. The aspects...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 3 Ribosome footprints quality control | DUX4 ribosome footprints profiling and translation efficiency">
+<meta name="twitter:description" content="In this chapter, we assessed the quality of the ribosome footprints (RPFs) in several aspects by using Bioconductor’s ribosomeProfilingQC package and the in-hoouse ad-hoc functions. The aspects...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Sen-0.4.3/font.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM%20Mono&amp;display=swap" rel="stylesheet">
+<link href="libs/Bitter-0.4.3/font.css" rel="stylesheet">
+<script src="libs/bs3compat-0.4.1/transition.js"></script><script src="libs/bs3compat-0.4.1/tabs.js"></script><script src="libs/bs3compat-0.4.1/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">DUX4 ribosome footprints profiling and translation efficiency</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html"><span class="header-section-number">1</span> About</a></li>
+<li><a class="" href="preprocessing.html"><span class="header-section-number">2</span> Preprocessing Ribosome footprints sequencing data</a></li>
+<li><a class="active" href="rpfs-qc.html"><span class="header-section-number">3</span> Ribosome footprints quality control</a></li>
+<li><a class="" href="profiling.html"><span class="header-section-number">4</span> P-sites profiling on genmoic features</a></li>
+<li><a class="" href="parts.html"><span class="header-section-number">5</span> Parts</a></li>
+<li><a class="" href="references.html">References</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/FredHutch/DUX4-IFNg-ribosome-footprints">View book source <i class="fas fa-air-freshener"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="rpfs-qc" class="section level1" number="3">
+<h1>
+<span class="header-section-number">3</span> Ribosome footprints quality control<a class="anchor" aria-label="anchor" href="#rpfs-qc"><i class="fas fa-link"></i></a>
+</h1>
+<p>In this chapter, we assessed the quality of the ribosome footprints (RPFs) in several aspects by using Bioconductor’s <em>ribosomeProfilingQC</em> package and the in-hoouse ad-hoc functions. The aspects include:</p>
+<ol style="list-style-type: decimal">
+<li>size of RPFs: calculating the size distribution of the RPFs, confirming that most RPFs are congruent with the actual size of ribosomes (26 - 29 nt)</li>
+<li>TSS off-set enrichment: visualizing the distance from 5’ end of reads to the start codon to decide the best off-set for p-sites</li>
+<li>p-sites and reading frames: estimating p-sites coordinates of RPFs of the dominant length (26 - 29 nt) and ensuring p-sites are in-frame around the start codon</li>
+<li>trinucleotide periodicity on transcripts: constructing meta-gene p-sites coverage plot, colored by reading frames, to show the trinucleotide footprint periodicity from 5’ UTR, CDS, to 3’ UTR</li>
+</ol>
+<p>After ensuring the quality of RPFs and p-sites, we profiled PRFs by counting p-sites on different genomic features including 5’ UTR, CDS, and 3’ UTR.</p>
+<p>The main script performed the RPFs QC is <a href="https://github.com/FredHutch/DUX4-IFNg-ribosome-footprints/scripts/020-use_riboProfilingQC.R">here</a>. Note that we do not include BAM files in our repository. Since all code chunks in this chapter involve the BAM files and therefore would not be evaluated. This means the figures in this section were pre-generated.</p>
+<div id="preparation" class="section level2" number="3.1">
+<h2>
+<span class="header-section-number">3.1</span> Preparation<a class="anchor" aria-label="anchor" href="#preparation"><i class="fas fa-link"></i></a>
+</h2>
+<p>The code chunk below loads the libraries:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">ribosomeProfilingQC</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mikelove/DESeq2">DESeq2</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/Rsamtools">Rsamtools</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">GenomicFeatures</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/GenomicAlignments">GenomicAlignments</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">hg38.HomoSapiens.Gencode.v35</span><span class="op">)</span></span>
+<span><span class="va">txdb</span> <span class="op">&lt;-</span> <span class="va">hg38.HomoSapiens.Gencode.v35</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">BSgenome.Hsapiens.UCSC.hg38</span><span class="op">)</span></span>
+<span><span class="va">genome</span> <span class="op">&lt;-</span> <span class="va">BSgenome.Hsapiens.UCSC.hg38</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/Bioconductor/BiocParallel">BiocParallel</a></span><span class="op">)</span></span>
+<span><span class="va">bp_param</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/MulticoreParam-class.html">MulticoreParam</a></span><span class="op">(</span>workers <span class="op">=</span> <span class="fl">4L</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html">register</a></span><span class="op">(</span><span class="va">bp_param</span>, default<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">pkg_dir</span> <span class="op">&lt;-</span> <span class="st">"/fh/fast/tapscott_s/CompBio/Ribo-seq/hg38.DUX4.IFN.ribofootprint.2"</span></span>
+<span><span class="va">scratch_dir</span> <span class="op">&lt;-</span> <span class="st">"/fh/scratch/delete90/tapscott_s/hg38.DUX4.IFN.ribofootprint.R1"</span></span>
+<span><span class="va">fig_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">pkg_dir</span>, <span class="st">"figures"</span>, <span class="st">"QC"</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">pkg_dir</span>, <span class="st">"scripts"</span>, <span class="st">"tools.R"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">pkg_dir</span>, <span class="st">"scripts"</span>, <span class="st">"fork_readsEndPlot.R"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>Building sample information:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">bam_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">scratch_dir</span>, <span class="st">"bam"</span>, <span class="st">"merged_bam_runs"</span><span class="op">)</span></span>
+<span><span class="va">bam_files</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span><span class="op">(</span><span class="va">bam_dir</span>, pattern<span class="op">=</span><span class="st">".bam$"</span>, full.names<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">sample_info</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
+<span>  bam_files <span class="op">=</span> <span class="va">bam_files</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span><span class="op">(</span><span class="va">bam_dir</span>, pattern<span class="op">=</span><span class="st">".bam$"</span>, full.names<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>sample_name <span class="op">=</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_replace.html">str_replace</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/path.html">basename</a></span><span class="op">(</span><span class="va">bam_files</span><span class="op">)</span>,</span>
+<span>                                            <span class="st">".bam"</span>, <span class="st">""</span><span class="op">)</span>,</span>
+<span>                  treatment <span class="op">=</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_replace.html">str_replace</a></span><span class="op">(</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_sub.html">str_sub</a></span><span class="op">(</span><span class="va">sample_name</span>, start<span class="op">=</span><span class="fl">1L</span>, end<span class="op">=</span><span class="op">-</span><span class="fl">3L</span><span class="op">)</span>, <span class="st">"[^_]+_"</span>, <span class="st">""</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>treatment <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">treatment</span>, levels<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"untreated"</span>, <span class="st">"DOX-pulse"</span>, <span class="st">"IFNg"</span>, <span class="st">"DOX-pulse_IFNg"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="esitmate-the-optimal-read-lengths" class="section level2" number="3.2">
+<h2>
+<span class="header-section-number">3.2</span> Esitmate the optimal read lengths<a class="anchor" aria-label="anchor" href="#esitmate-the-optimal-read-lengths"><i class="fas fa-link"></i></a>
+</h2>
+<p>The code chunk below uses the <code>ribosomePrfilingQC</code> package to get the length of the RPFs and reveals optimal read lengths. Fig <a href="rpfs-qc.html#fig:include-size-length">3.1</a> shows that the dominated RPF segment size ranges from 26 to 29 nt.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># (a) read length frequency</span></span>
+<span><span class="va">read_length_freq</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/bplapply.html">bplapply</a></span><span class="op">(</span><span class="va">sample_info</span><span class="op">$</span><span class="va">bam_files</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">bam_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Rsamtools/man/BamFile-class.html">BamFile</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span>  <span class="va">p_site</span> <span class="op">&lt;-</span> <span class="fu">estimatePsite</span><span class="op">(</span><span class="va">bam_file</span>, <span class="va">CDS</span>, <span class="va">genome</span><span class="op">)</span></span>
+<span>  <span class="va">pc</span> <span class="op">&lt;-</span> <span class="fu">getPsiteCoordinates</span><span class="op">(</span><span class="va">bam_file</span>, bestpsite <span class="op">=</span> <span class="va">p_site</span><span class="op">)</span></span>
+<span>  <span class="va">read_length_freq</span> <span class="op">&lt;-</span> <span class="fu">summaryReadsLength</span><span class="op">(</span><span class="va">pc</span>, widthRange <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">25</span><span class="op">:</span><span class="fl">39</span><span class="op">)</span>, plot<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">read_length_freq</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">sample_info</span><span class="op">$</span><span class="va">sample_name</span></span>
+<span></span>
+<span><span class="co"># (b) tidy data</span></span>
+<span><span class="va">length_freq</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map_dfr</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">read_length_freq</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="va">read_length_freq</span><span class="op">[[</span><span class="va">x</span><span class="op">]</span><span class="op">]</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html">rename</a></span><span class="op">(</span>length<span class="op">=</span><span class="st">"Var1"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://tibble.tidyverse.org/reference/add_column.html">add_column</a></span><span class="op">(</span>sample_name<span class="op">=</span><span class="va">x</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>order <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">length</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>length <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="va">length</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">sample_info</span>, <span class="va">sample_name</span>, <span class="va">treatment</span><span class="op">)</span>,</span>
+<span>            by<span class="op">=</span><span class="st">"sample_name"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">treatment</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>sample_name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">sample_name</span>, levels<span class="op">=</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/unique.html">unique</a></span><span class="op">(</span><span class="va">sample_name</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># (c) plot</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">length_freq</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">length</span>, y<span class="op">=</span><span class="va">Freq</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar</a></span><span class="op">(</span>stat<span class="op">=</span><span class="st">"identity"</span>, width<span class="op">=</span><span class="fl">0.7</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span> <span class="op">~</span> <span class="va">sample_name</span>, nrow<span class="op">=</span><span class="fl">4</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x<span class="op">=</span><span class="st">"Read length"</span>, y<span class="op">=</span><span class="st">"Frequency"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html">ggsave</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">fig_dir</span>, <span class="st">"freqment_size_frequency.pdf"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="st">"images/freqment_size_frequency.pdf"</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:include-size-length"></span>
+<embed src="images/freqment_size_frequency.pdf" title="Distribution of size of RPF segments" width="400px" height="400px" type="application/pdf"></embed><p class="caption">
+Figure 3.1: Distribution of size of RPF segments
+</p>
+</div>
+</div>
+<div id="distance-from-5-end-of-reads-to-the-start-codon" class="section level2" number="3.3">
+<h2>
+<span class="header-section-number">3.3</span> Distance from 5’ end of reads to the start codon<a class="anchor" aria-label="anchor" href="#distance-from-5-end-of-reads-to-the-start-codon"><i class="fas fa-link"></i></a>
+</h2>
+<p>The distance from 5’ end of reads to the start codon of CDS can help to determine the best position of p-sites. In Figure <a href="rpfs-qc.html#fig:distant-to-start-codon">3.2</a>, the 5’ end of reads are enriched at 13 position upstream from the start codon. This means the best p-sites is located at 13th nucleotide of the RPF segment and lots of ribosome are docking at the translation start sites.</p>
+<p>Note that the <code>ribosomeProfilingQC::readsEndPlot()</code> function meant to make such a plot; however, the function itself has a flaw that fails to reverse the mapping for the genes on the negative strand. I forked the function and collected the mistake. (Later I will fork the pakcage and make it available on github, meanwhile, I am using <code>fork_readsEndPlot</code> from <code>scripts/fork_readsEndPlot.R</code>).</p>
+<p>Code chunk below is the tool to tidy the distance data.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">.tidy_dist_data</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">dist_list</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">dist</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map_dfr</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">dist_list</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="va">dist_list</span><span class="op">[[</span><span class="va">x</span><span class="op">]</span><span class="op">]</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html">rename</a></span><span class="op">(</span>counts <span class="op">=</span> <span class="va">`dist_list[[x]]`</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/rownames.html">rownames_to_column</a></span><span class="op">(</span>var <span class="op">=</span> <span class="st">"dist"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/add_column.html">add_column</a></span><span class="op">(</span>sample_name <span class="op">=</span> <span class="va">x</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>dist <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">dist</span>, levels<span class="op">=</span><span class="va">dist</span><span class="op">)</span><span class="op">)</span> </span>
+<span>  <span class="op">}</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">sample_info</span>, <span class="va">sample_name</span>, <span class="va">treatment</span><span class="op">)</span>, by<span class="op">=</span><span class="st">"sample_name"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">treatment</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>sample_name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">sample_name</span>, levels<span class="op">=</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/unique.html">unique</a></span><span class="op">(</span><span class="va">sample_name</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p>Restricting the read length to 26 to 29 nt, the code below estimates the pileup of 5’ end of reads 30 position up/down-stream from the start codon:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">read_length</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">26</span><span class="op">:</span><span class="fl">29</span><span class="op">)</span></span>
+<span><span class="co"># (a) distance to start codon [-29, 30]</span></span>
+<span><span class="va">start_codon_30</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/bplapply.html">bplapply</a></span><span class="op">(</span><span class="va">sample_info</span><span class="op">$</span><span class="va">bam_files</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">bam_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Rsamtools/man/BamFile-class.html">BamFile</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span>  <span class="fu">fork_readsEndPlot</span><span class="op">(</span><span class="va">bam_file</span>, <span class="va">CDS</span>, toStartCodon<span class="op">=</span><span class="cn">TRUE</span>, readLen<span class="op">=</span><span class="va">read_length</span>, window<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">29</span>, <span class="fl">30</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="co">#ribosomeProfilingQC::readsEndPlot(bam_file, CDS_pos, toStartCodon=TRUE, readLen=read_length,</span></span>
+<span>  <span class="co">#             window= c(-29, 30))</span></span>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">start_codon_30</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">sample_info</span><span class="op">$</span><span class="va">sample_name</span></span>
+<span></span>
+<span><span class="co"># (b) tidy data and hist (bar)</span></span>
+<span><span class="va">.tidy_dist_data</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">dist_list</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">dist</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map_dfr</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">dist_list</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="va">dist_list</span><span class="op">[[</span><span class="va">x</span><span class="op">]</span><span class="op">]</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html">rename</a></span><span class="op">(</span>counts <span class="op">=</span> <span class="va">`dist_list[[x]]`</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/rownames.html">rownames_to_column</a></span><span class="op">(</span>var <span class="op">=</span> <span class="st">"dist"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/add_column.html">add_column</a></span><span class="op">(</span>sample_name <span class="op">=</span> <span class="va">x</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>dist <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">dist</span>, levels<span class="op">=</span><span class="va">dist</span><span class="op">)</span><span class="op">)</span> </span>
+<span>  <span class="op">}</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">sample_info</span>, <span class="va">sample_name</span>, <span class="va">treatment</span><span class="op">)</span>, by<span class="op">=</span><span class="st">"sample_name"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">treatment</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>sample_name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">sample_name</span>, levels<span class="op">=</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/unique.html">unique</a></span><span class="op">(</span><span class="va">sample_name</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">dist</span> <span class="op">&lt;-</span> <span class="fu">.tidy_dist_data</span><span class="op">(</span><span class="va">start_codon_30</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">dist</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">dist</span>, y<span class="op">=</span><span class="va">counts</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar</a></span><span class="op">(</span>stat<span class="op">=</span><span class="st">"identity"</span>, width<span class="op">=</span><span class="fl">0.7</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x<span class="op">=</span><span class="st">"Distance from 5' end of reads to start codon"</span>, y<span class="op">=</span><span class="st">"counts"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span> <span class="op">~</span> <span class="va">sample_name</span>, nrow<span class="op">=</span><span class="fl">4</span>, scale<span class="op">=</span><span class="st">"free"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_vline</a></span><span class="op">(</span>xintercept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/which.html">which</a></span><span class="op">(</span><span class="va">dist</span><span class="op">$</span><span class="va">dist</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span>,</span>
+<span>             linetype<span class="op">=</span><span class="st">"dashed"</span>, alpha<span class="op">=</span><span class="fl">0.3</span>, show.legend<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>axis.text.x<span class="op">=</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">90</span>, hjust <span class="op">=</span> <span class="fl">1</span>, vjust<span class="op">=</span><span class="fl">0.5</span>, size<span class="op">=</span><span class="fl">4</span><span class="op">)</span>,</span>
+<span>        panel.grid.major <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span><span class="op">(</span><span class="op">)</span>, <span class="co">#panel.grid.minor = element_blank(),</span></span>
+<span>        panel.background <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html">ggsave</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">fig_dir</span>, <span class="st">"distance_from_5end_to_start_codon_30-fork-readsEndPlot.pdf"</span><span class="op">)</span><span class="op">)</span><span class="co">#, width=8, height=6)</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="st">"images/distance_from_5end_to_start_codon_30-fork-readsEndPlot.pdf"</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:distant-to-start-codon"></span>
+<embed src="images/distance_from_5end_to_start_codon_30-fork-readsEndPlot.pdf" title="Distance from 5 prime end reads to start codon reveals the best position of p-site: 13 nucleotide shift" width="400px" height="400px" type="application/pdf"></embed><p class="caption">
+Figure 3.2: Distance from 5 prime end reads to start codon reveals the best position of p-site: 13 nucleotide shift
+</p>
+</div>
+</div>
+<div id="p-sites-and-reading-frames" class="section level2" number="3.4">
+<h2>
+<span class="header-section-number">3.4</span> P-sites and reading frames<a class="anchor" aria-label="anchor" href="#p-sites-and-reading-frames"><i class="fas fa-link"></i></a>
+</h2>
+<p>We use <code>ribosomeProfilingQC::getPsiteCoordinates()</code> and <code>ribosomeProfilingQC::assigneReadingFrame()</code> to get p-sites coordinates and assign the reading frames within annotated CDS. We plotted the p-sites around the translation start sites and colored them by reading frames. Figure <a href="rpfs-qc.html#fig:reading-frame-tss">3.3</a> ensures that the p-sites were correct and in-frame with the start codon.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">reading_frame</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/bplapply.html">bplapply</a></span><span class="op">(</span><span class="va">sample_info</span><span class="op">$</span><span class="va">bam_files</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">bam_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Rsamtools/man/BamFile-class.html">BamFile</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span>  <span class="va">p_site</span> <span class="op">&lt;-</span> <span class="fu">estimatePsite</span><span class="op">(</span><span class="va">bam_file</span>, <span class="va">CDS</span>, <span class="va">genome</span><span class="op">)</span> <span class="co"># 13</span></span>
+<span>  <span class="va">pc</span> <span class="op">&lt;-</span> <span class="fu">getPsiteCoordinates</span><span class="op">(</span><span class="va">bam_file</span>, bestpsite <span class="op">=</span> <span class="va">p_site</span><span class="op">)</span></span>
+<span>  <span class="va">pc_sub</span> <span class="op">&lt;-</span> <span class="va">pc</span><span class="op">[</span><span class="va">pc</span><span class="op">$</span><span class="va">qwidth</span> <span class="op"><a href="https://rdrr.io/pkg/BiocGenerics/man/match.html">%in%</a></span> <span class="va">read_length</span><span class="op">]</span></span>
+<span>  <span class="va">pc_sub</span> <span class="op">&lt;-</span> <span class="fu">assignReadingFrame</span><span class="op">(</span><span class="va">pc_sub</span>, <span class="va">CDS</span><span class="op">)</span></span>
+<span>  <span class="va">distance</span> <span class="op">&lt;-</span> <span class="fu">plotDistance2Codon</span><span class="op">(</span><span class="va">pc_sub</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">reading_frame</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">sample_info</span><span class="op">$</span><span class="va">sample_name</span></span>
+<span></span>
+<span><span class="co"># tidy reading_frame tool</span></span>
+<span><span class="va">.tidy_reading_frame</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">rf_list</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">rf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map_dfr</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">rf_list</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">rf_list</span><span class="op">[[</span><span class="va">x</span><span class="op">]</span><span class="op">]</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/as.data.frame.html">as.data.frame</a></span><span class="op">(</span>stringsAsFactors<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>      <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html">rename</a></span><span class="op">(</span>index<span class="op">=</span><span class="st">"Var1"</span>, Frequency<span class="op">=</span><span class="st">"Freq"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>      <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>index<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">index</span><span class="op">)</span>, Frequency<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">Frequency</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>      <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>frame <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span><span class="op">(</span><span class="va">index</span> <span class="op"><a href="https://rdrr.io/r/base/Arithmetic.html">%%</a></span> <span class="fl">3</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>      <span class="fu"><a href="https://tibble.tidyverse.org/reference/add_column.html">add_column</a></span><span class="op">(</span>sample_name <span class="op">=</span> <span class="va">x</span><span class="op">)</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span><span class="op">}</span>  </span>
+<span></span>
+<span><span class="co"># ggplot</span></span>
+<span><span class="va">tidy_rf</span> <span class="op">&lt;-</span> <span class="fu">.tidy_reading_frame</span><span class="op">(</span><span class="va">reading_frame</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">sample_info</span>, <span class="va">sample_name</span>, <span class="va">treatment</span><span class="op">)</span>, by<span class="op">=</span><span class="st">"sample_name"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">treatment</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>sample_name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">sample_name</span>, levels<span class="op">=</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/unique.html">unique</a></span><span class="op">(</span><span class="va">sample_name</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">tidy_rf</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">index</span>, y<span class="op">=</span><span class="va">Frequency</span>, fill<span class="op">=</span><span class="va">frame</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar</a></span><span class="op">(</span>stat<span class="op">=</span><span class="st">"identity"</span>, width<span class="op">=</span><span class="fl">0.7</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span> <span class="op">~</span> <span class="va">sample_name</span>, nrow<span class="op">=</span><span class="fl">4</span>, scale<span class="op">=</span><span class="st">"free"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.25</span>, <span class="fl">0.93</span><span class="op">)</span>, legend.key.size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/unit.html">unit</a></span><span class="op">(</span><span class="fl">0.3</span>, <span class="st">'cm'</span><span class="op">)</span>, </span>
+<span>          axis.text.x<span class="op">=</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>size<span class="op">=</span><span class="fl">5</span><span class="op">)</span>, panel.grid.major <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x<span class="op">=</span><span class="st">"P site relative to start codon"</span>, y<span class="op">=</span><span class="st">"counts"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span>breaks<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">50</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html">scale_fill_brewer</a></span><span class="op">(</span>palette<span class="op">=</span><span class="st">"Dark2"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html">ggsave</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">fig_dir</span>, <span class="st">"reading_frame_psite_to_start_codon.pdf"</span><span class="op">)</span>, width<span class="op">=</span><span class="fl">8</span>, height<span class="op">=</span><span class="fl">6</span><span class="op">)</span>   </span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="st">"images/reading_frame_psite_to_start_codon.pdf"</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:reading-frame-tss"></span>
+<embed src="images/reading_frame_psite_to_start_codon.pdf" title="Reading frames of p-sites on annotated CDS and around start codon" width="400px" height="400px" type="application/pdf"></embed><p class="caption">
+Figure 3.3: Reading frames of p-sites on annotated CDS and around start codon
+</p>
+</div>
+</div>
+<div id="trinucleotide-periodicity-on-transcripts" class="section level2" number="3.5">
+<h2>
+<span class="header-section-number">3.5</span> Trinucleotide periodicity on transcripts<a class="anchor" aria-label="anchor" href="#trinucleotide-periodicity-on-transcripts"><i class="fas fa-link"></i></a>
+</h2>
+<p>Here, we constructed a reading frame frequency plot and meta-gene plot of p-sites coverage, colored by reading frames, on annotated 5’ UTR, CDS, and 3’ UTR regions. Figure <a href="rpfs-qc.html#fig:reading-frame-freq-transcripts">3.4</a> and Figure <a href="rpfs-qc.html#fig:meta-gene-coverage">3.5</a> confirmed that (1) the enriched RPFs docked on the translation start sties, and (2) the trinucleotide footprint periodicity only occurred on the CDS.</p>
+<p>Because the <code>ribosomeProfilingQC::assigneReadingFrame()</code> function only assigns reading frames for p-sites on the annotated CDS, I wrote <a href="https://https://github.com/FredHutch/DUX4-IFNg-ribosome-footprints/scripts/tools_assign_utr_frame.R">tools</a> to assign reading frame to p-sites that are exclusively lay on the annotated UTR regions. Giving an overview of the trinucleotide periodicity on the whole transcripts this <a href="https://https://github.com/FredHutch/DUX4-IFNg-ribosome-footprints/scripts/10C-manuscript-figures-periodicity-reading-frames.R">script</a> constructed a meta-gene p-sites coverage in 5’ UTR, CDS, and 3’ UTR regions, as shown in Figure <a href="rpfs-qc.html#fig:meta-gene-coverage">3.5</a>.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="st">"images/frame_frequency_by_regions_average_over_treatment.pdf"</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:reading-frame-freq-transcripts"></span>
+<embed src="images/frame_frequency_by_regions_average_over_treatment.pdf" title="Reading frame frequency on 5 prime UTR, CDS, and 3 prime UTR" width="400px" height="170px" type="application/pdf"></embed><p class="caption">
+Figure 3.4: Reading frame frequency on 5 prime UTR, CDS, and 3 prime UTR
+</p>
+</div>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="st">"images/reading_frame_periodicity_by_treatment_norm.pdf"</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:meta-gene-coverage"></span>
+<embed src="images/reading_frame_periodicity_by_treatment_norm.pdf" title="Meta-gene p-sites coverage" width="400px" height="200px" type="application/pdf"></embed><p class="caption">
+Figure 3.5: Meta-gene p-sites coverage
+</p>
+</div>
+
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="preprocessing.html"><span class="header-section-number">2</span> Preprocessing Ribosome footprints sequencing data</a></div>
+<div class="next"><a href="profiling.html"><span class="header-section-number">4</span> P-sites profiling on genmoic features</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#rpfs-qc"><span class="header-section-number">3</span> Ribosome footprints quality control</a></li>
+<li><a class="nav-link" href="#preparation"><span class="header-section-number">3.1</span> Preparation</a></li>
+<li><a class="nav-link" href="#esitmate-the-optimal-read-lengths"><span class="header-section-number">3.2</span> Esitmate the optimal read lengths</a></li>
+<li><a class="nav-link" href="#distance-from-5-end-of-reads-to-the-start-codon"><span class="header-section-number">3.3</span> Distance from 5’ end of reads to the start codon</a></li>
+<li><a class="nav-link" href="#p-sites-and-reading-frames"><span class="header-section-number">3.4</span> P-sites and reading frames</a></li>
+<li><a class="nav-link" href="#trinucleotide-periodicity-on-transcripts"><span class="header-section-number">3.5</span> Trinucleotide periodicity on transcripts</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/FredHutch/DUX4-IFNg-ribosome-footprints/blob/main/book/02-ribo-seq-qc.Rmd">View source <i class="fas fa-air-freshener"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/FredHutch/DUX4-IFNg-ribosome-footprints/edit/main/book/02-ribo-seq-qc.Rmd">Edit this page <i class="fas fa-air-freshener"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>DUX4 ribosome footprints profiling and translation efficiency</strong>" was written by Chao-Jen Wong. It was last built on 2022-11-29.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer>
+</body>
+</html>
