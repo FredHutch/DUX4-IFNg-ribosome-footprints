@@ -1,0 +1,223 @@
+# mRNA profiling and DUX4/IFNg induced genes {#mRNA}
+```{r setup-4, include=FALSE}
+knitr::opts_chunk$set(eval = FALSE)
+```
+In this chapter, we performed mRNA profiling on different genomic features and identified DUX4 and $IFN_{\gamma}$ induced genes. 
+
+## mRNA profiling
+Similar to the RPFs profiling, we used `GenomicAlignments::summarizedOverlaps()` to perform gene counting on gene-based features—CDS and exons—and transcript-based features including 5' UTR, around translation start site ([-13, 13]), first exon, and 3' TUR.
+
+Note that this mRNA profiling involved BAM files and therefore the results (`DESeqDataSeq` instance) of the code here were not generated on the fly. 
+
+Code chunk belows load libraries and defines sample info as meta data. 
+```{r loading-library-for-mRNA-profiling}
+library(hg38.HomoSapiens.Gencode.v35)
+data(gene.anno)
+txdb <- hg38.HomoSapiens.Gencode.v35
+library(GenomicAlignments)
+library(tidyverse)
+
+library(BiocParallel)
+bp_param=MulticoreParam(workers = 12L)
+register(bp_param, default=TRUE)
+
+#
+# Define parameters and sample info
+#
+pkg_dir <- "/fh/fast/tapscott_s/CompBio/Ribo-seq/hg38.DUX4.IFN.ribofootprint.2"
+rna_bam_dir <- "/fh/fast/tapscott_s/CompBio/dchamm/DCH_Paired_RiboSeq_RNA-Seq_BAM_files"
+
+sample_info <- data.frame(
+  bam_files = bam_files <- list.files(rna_bam_dir, pattern=".bam$", full.names=TRUE)) %>%
+    dplyr::mutate(sample_name = str_replace(basename(bam_files),
+                                            ".bam", ""),
+                  treatment = str_replace(str_sub(sample_name,
+                                                  start=1L, end=-3L),
+                                          "[^_]+_", "")) %>%
+    dplyr::mutate(treatment = str_replace(treatment, "-", "_")) %>%
+    dplyr::mutate(treatment = recode(treatment, Untreated="untreated")) %>%
+    dplyr::mutate(treatment = factor(treatment, 
+                                     levels=c("untreated",
+                                              "DOX_pulse", "IFNg",
+                                              "DOX_pulse_IFNg")))
+rownames(sample_info) <- sample_info$sample_name 
+
+#
+# tools for tx_name
+#
+.get_row_data_txname <- function(rse, txdb) {
+  tx_name <- rownames(rse)
+  df <- AnnotationDbi::select(txdb, keys=tx_name, columns="GENEID", keytype="TXNAME",
+                              multiVals="first") %>% as.data.frame() %>%
+    dplyr::distinct(TXNAME, .keep_all=TRUE) %>%
+    dplyr::rename(tx_name=TXNAME, gene_id=GENEID) %>%
+    dplyr::left_join(as.data.frame(gene.anno), by="gene_id") %>%
+    dplyr::select(tx_name, gene_id, gene_type, gene_name, hgnc_id)                       
+  rownames(df) <- df$tx_name
+  rowData(rse) <- df[rownames(rse), ]
+  
+  return(rse)
+}
+```
+
+Code chunks below profiles mRNA in different genomic features.
+```{r makeEset-CDS}
+# (a) tx-based features
+load(file.path(pkg_dir, "data", "tx_based_features.rda")) # 5'UTR/TSS/1stExon/3'UTR
+around_TSS <- tx_based_features$around_TSS
+feature_5p <- tx_based_features$feature_5p
+feature_3p <- tx_based_features$feature_3p
+first_exon <- tx_based_features$first_exon
+
+# (b) gene-based features
+cds <- cdsBy(txdb, by="gene")
+exons <- exonsBy(txdb, by="gene")
+
+#
+# CDS expression by genes
+#
+rse_cds_mRNA <- summarizeOverlaps(features = cds, 
+                                  reads=BamFileList(sample_info$bam_files),
+                                  mode = "IntersectionStrict",
+                                  inter.feature = TRUE,
+                                  ignore.strand=TRUE)
+colnames(rse_cds_mRNA) <- sample_info$sample_name                                  
+colData(rse_cds_mRNA) <- as(sample_info, "DataFrame")
+rowData(rse_cds_mRNA) <- gene.anno[rownames(rse_cds_mRNA),
+                                   c("gene_id", "gene_type",
+                                     "gene_name", "hgnc_id")]
+save(rse_cds_mRNA, file=file.path(pkg_dir, "data",
+                                  "rse_cds_mRNA.rda"))  
+```
+
+Profiling exons by genes:
+```{r makeRSE-exons}
+#
+# exons expression by genes
+#
+rse_exons_mRNA <- summarizeOverlaps(features = exons, 
+                                  reads=BamFileList(sample_info$bam_files),
+                                  mode = "IntersectionStrict",
+                                  inter.feature = TRUE, ignore.strand=TRUE)
+colnames(rse_exons_mRNA) <- sample_info$sample_name                                  
+colData(rse_exons_mRNA) <- as(sample_info, "DataFrame")
+rowData(rse_exons_mRNA) <- gene.anno[rownames(rse_exons_mRNA),
+                                   c("gene_id", "gene_type",
+                                     "gene_name", "hgnc_id")]
+save(rse_exons_mRNA, file=file.path(pkg_dir, "data",
+                                    "rse_exons_mRNA.rda"))  
+```
+
+Profiling first exons by transcripts:
+```{r makeRSE-1st-exons}
+#
+# first exon by transcripts (tx) - inherit sizeFactor from rse_cds_mRNA; must turn off inter.feature
+#
+
+rse_1st_exon_by_tx_mRNA <- 
+  summarizeOverlaps(features = first_exon, 
+                    reads=BamFileList(sample_info$bam_files),
+                    mode = "IntersectionStrict",
+                    inter.feature = FALSE, ignore.strand=TRUE, BPPARAM=bp_param)
+colnames(rse_1st_exon_by_tx_mRNA) <- sample_info$sample_name                                  
+colData(rse_1st_exon_by_tx_mRNA) <- as(sample_info, "DataFrame")
+rse_1st_exon_by_tx_mRNA <- .get_row_data_txname(rse_1st_exon_by_tx_mRNA, txdb)
+save(rse_1st_exon_by_tx_mRNA, file=file.path(pkg_dir, "data", "rse_1st_exon_by_tx_mRNA.rda"))
+```
+
+Profiling round translation start sites [-13, 13]:
+```{r makeRSE-TSS}
+#
+# around TSS
+#
+rse_TSS_by_tx_mRNA <- 
+    summarizeOverlaps(features = around_TSS, 
+                      reads=BamFileList(sample_info$bam_files),
+                      mode = "Union",
+                      inter.feature = FALSE, ignore.strand=TRUE, BPPARAM=bp_param)
+colnames(rse_TSS_by_tx_mRNA) <- sample_info$sample_name                                  
+colData(rse_TSS_by_tx_mRNA) <- as(sample_info, "DataFrame")
+rse_TSS_by_tx_mRNA <- .get_row_data_txname(rse_TSS_by_tx_mRNA, txdb)
+save(rse_TSS_by_tx_mRNA, file=file.path(pkg_dir, "data",
+                                        "rse_TSS_by_tx_mRNA.rda"))  
+```
+
+Profiling on 5' UTR and 3' UTR:
+```{r makeRSE-UTR}
+#
+# 5' UTR
+#
+rse_5UTR_by_tx_mRNA <- 
+    summarizeOverlaps(features = feature_5p, 
+                      reads=BamFileList(sample_info$bam_files),
+                      mode = "Union",
+                      inter.feature = FALSE, ignore.strand=TRUE, BPPARAM=bp_param)
+colnames(rse_5UTR_by_tx_mRNA) <- sample_info$sample_name                                  
+colData(rse_5UTR_by_tx_mRNA) <- as(sample_info, "DataFrame")
+rse_5UTR_by_tx_mRNA <- .get_row_data_txname(rse_5UTR_by_tx_mRNA,
+                                            txdb)
+save(rse_5UTR_by_tx_mRNA, file=file.path(pkg_dir, "data",
+                                         "rse_5UTR_by_tx_mRNA.rda"))
+#
+# 3' UTR
+#
+rse_3UTR_by_tx_mRNA <- 
+    summarizeOverlaps(features = feature_3p, 
+                      reads=BamFileList(sample_info$bam_files),
+                      mode = "Union",
+                      inter.feature = FALSE, ignore.strand=TRUE, BPPARAM=bp_param)
+colnames(rse_3UTR_by_tx_mRNA) <- sample_info$sample_name                                  
+colData(rse_3UTR_by_tx_mRNA) <- as(sample_info, "DataFrame")
+rse_3UTR_by_tx_mRNA <- .get_row_data_txname(rse_3UTR_by_tx_mRNA, txdb)
+save(rse_3UTR_by_tx_mRNA, file=file.path(pkg_dir, "data",
+                                         "rse_3UTR_by_tx_mRNA.rda"))
+```
+
+## Define DUX4 and IFN-gamma induced genes
+We used the mRNA profiling on CDS and applied _DESeq2_ to determine the DUX4 and $IFN_{\gamma}$ induced genes with thresholds adjusted $p$-value $< 0.05$ and $logFC > 1$. 
+
+```{r S1-DUX4-vs-untreated}
+#
+# (1) DUX4-induced: DOX_pulse vs. untreated
+#
+rna_S1 <- rse_cds_mRNA[, rse_cds_mRNA$treatment %in% c("untreated", "DOX_pulse")]
+rna_S1 <- rna_S1[rowSums(assays(rna_S1)[["counts"]]) >= 12] 
+rna_S1$treatment <- factor(rna_S1$treatment, levels=c("untreated", "DOX_pulse"))
+dds_rna_S1 <- DESeqDataSet(rna_S1, design = ~ treatment)
+dds_rna_S1 <- estimateSizeFactors(dds_rna_S1)
+dds_rna_S1 <- DESeq(dds_rna_S1)
+
+# DUX4_induced with lfc > 1 and padj < 0.05
+DUX4_induced_v2 <- results(dds_rna_S1, alpha=0.05, tidy=TRUE) %>%
+  dplyr::filter(padj < 0.05, log2FoldChange > 1 ) %>%
+  dplyr::arrange(padj) %>%
+  dplyr::rename(ensembl="row") %>%
+  dplyr::mutate(gene_name=rowData(dds_rna_S1[ensembl])$gene_name,
+                gene_type=rowData(dds_rna_S1[ensembl])$gene_type, .before=2) %>%
+  dplyr::mutate(status=if_else(log2FoldChange > 1, "up", "down")) %>%
+  dplyr::left_join(cnt, by="ensembl")
+save(DUX4_induced_v2, file=file.path(pkg_dir, "data", "DUX4_induced_v2.rda"))
+```
+
+```{r S2-INFg-vs-untreated}
+#
+# (2) S2 - IFNg induced: IFNg vs. untreated
+#
+rna_S2 <- rse_cds_mRNA[, rse_cds_mRNA$treatment %in% c("untreated", "IFNg")]
+rna_S2 <- rna_S2[rowSums(assays(rna_S2)[["counts"]]) >= 12] 
+rna_S2$treatement <- factor(rna_S2$treatment, levels=c("untreated", "IFNg"))
+dds_rna_S2 <- DESeqDataSet(rna_S2, design = ~ treatment)
+dds_rna_S2 <- estimateSizeFactors(dds_rna_S2)
+dds_rna_S2 <- DESeq(dds_rna_S2)
+
+IFNg_induced_v2 <- results(dds_rna_S2, alpha=0.05, tidy=TRUE) %>%
+  dplyr::filter(padj < 0.05, log2FoldChange > 1 ) %>%
+  dplyr::arrange(padj) %>%
+  dplyr::rename(ensembl="row") %>%
+  dplyr::mutate(gene_name=rowData(dds_rna_S6[ensembl])$gene_name,
+                gene_type=rowData(dds_rna_S6[ensembl])$gene_type,
+                .before=2) %>%
+  dplyr::mutate(counts=counts(dds_rna_S6[ensembl], normalized=TRUE))  
+save(IFNg_induced_v2, file=file.path(pkg_dir, "data",
+                                     "IFNg_induced_v2.rda"))
+```
