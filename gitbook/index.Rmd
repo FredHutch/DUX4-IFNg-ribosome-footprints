@@ -1,62 +1,39 @@
 --- 
-title: "A Minimal Book Example"
-author: "John Doe"
+title: "DUX4 ribosome footprints profiling and translation efficiency"
+author: "Chao-Jen Wong"
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 documentclass: book
 bibliography: [book.bib, packages.bib]
-url: https://bookdown.org/janedoe/bookdown-demo
-cover-image: cover.png
-# url: your book url like https://bookdown.org/yihui/bookdown
-# cover-image: path to the social sharing image like images/cover.jpg
+url: https://FredHutch.github.io/DUX4-IFNg-ribosome-footprints
+#cover-image: images/cover.png
 description: |
-  This is a minimal example of using the bookdown package to write a book.
-  The HTML output format for this example is bookdown::bs4_book,
-  set in the _output.yml file.
+  This is a book providing detailed descriptions and R code to serve the purposed of transparency and reproducibility of our ribosome footprints analysis from the publication: DUX4 orchestrates translational reprograming by broadly suppressing translation.
 biblio-style: apalike
 csl: chicago-fullnote-bibliography.csl
 ---
 
 # About
 
-This is a _sample_ book written in **Markdown**. You can use anything that Pandoc's Markdown supports; for example, a math equation $a^2 + b^2 = c^2$.
+This book provides detailed descriptions and R code serving the purposes of transparency and reproducibility of the ribosome footprints analysis from our publication: _DUX4 orchestrates translational reprograming_.
 
-## Usage 
+## Samples and treatments
+The processed data sets of the RNA-seq and Ribo-seq data supporting the manuscript reside at the [data](https://github.com/FredHutch/DUX4-IFNg-ribosome-footprints/data) directory. Both RNA-seq and Ribo-seq data sets are transformed into `DESeq2DataSet` instances and consist of triplicates of untreated, IFN-gamma, DUX4, and DUX4+INF-gamma treatments. Together, they are used find insights into the translational reprogramming of DUX4. 
 
-Each **bookdown** chapter is an .Rmd file, and each .Rmd file can contain one (and only one) chapter. A chapter *must* start with a first-level heading: `# A good chapter`, and can contain one (and only one) first-level heading.
+## Softwear requirement
+* R (>=4.0.3): the tidyverse project, knitr, bookdown, rmarkdown
+* Bioconductor: DESeq2, goseq, GenomicAlignment, GenomicFeature, ribosomeProfilingQC, and etc.
 
-Use second-level and higher headings within chapters like: `## A short section` or `### An even shorter section`.
+## data
+The [data](https://github.com/FredHutch/DUX4-IFNg-ribosome-footprints/data) directory in this repo includes the processed data sets used for our analyses:
 
-The `index.Rmd` file is required, and is also your first book chapter. It will be the homepage when you render the book.
+* p_sites.rda: a list of _GRagnes_ instances of processed p-sites for 12 Ribo-seq samples    
+* dds_cds.rda: a list of _DESeqDataSet_ instances containing p-site counts on CDS regions and metadata (size factor and treatment)    
+* dds_.rda: DESeqDataSet instances containing p-site counts on different genomic features inclduing 5' UTR and 3' UTR    
 
-## Render book
+## TxDb annotation package for gencode v35
 
-You can render the HTML version of this example book without changing anything:
+Show how we make the annotation TxDb package here
 
-1. Find the **Build** pane in the RStudio IDE, and
-
-1. Click on **Build Book**, then select your output format, or select "All formats" if you'd like to use multiple formats from the same book source files.
-
-Or build the book from the R console:
-
-```{r, eval=FALSE}
-bookdown::render_book()
-```
-
-To render this example to PDF as a `bookdown::pdf_book`, you'll need to install XeLaTeX. You are recommended to install TinyTeX (which includes XeLaTeX): <https://yihui.org/tinytex/>.
-
-## Preview book
-
-As you work, you may start a local server to live preview this HTML book. This preview will update as you edit the book when you save individual .Rmd files. You can start the server in a work session by using the RStudio add-in "Preview book", or from the R console:
-
-```{r eval=FALSE}
-bookdown::serve_book()
-```
-
-
-```{r include=FALSE}
-# automatically create a bib database for R packages
-knitr::write_bib(c(
-  .packages(), 'bookdown', 'knitr', 'rmarkdown'
-), 'packages.bib')
-```
+## Additional scripts
+The [scripts](https://github.com/FredHutch/DUX4-IFNg-ribosome-footprints/scripts) directory contains the R code and shell scripts performing the bioinformatics analysis for the manuscripts.

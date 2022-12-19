@@ -1,4 +1,4 @@
-# P-sites profiling on genmoic features {#profiling}
+# P-sites profiling on genomic features {#profiling}
 ```{r setup-3, include=FALSE}
 knitr::opts_chunk$set(eval = FALSE)
 ```
