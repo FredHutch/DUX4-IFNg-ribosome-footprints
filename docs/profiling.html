@@ -4,16 +4,16 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Chapter 4 P-sites profiling on genmoic features | DUX4 ribosome footprints profiling and translation efficiency</title>
+<title>Chapter 4 P-sites profiling on genomic features | DUX4 ribosome footprints profiling and translation efficiency</title>
 <meta name="author" content="Chao-Jen Wong">
 <meta name="description" content="In this chapter, we used ribosomeProfilingQC::getPsiteCoordinates() to get p-sites coordinates. Due to its large size, the p-sites dataset is not included in the repo. What have been included are...">
 <meta name="generator" content="bookdown 0.30 with bs4_book()">
-<meta property="og:title" content="Chapter 4 P-sites profiling on genmoic features | DUX4 ribosome footprints profiling and translation efficiency">
+<meta property="og:title" content="Chapter 4 P-sites profiling on genomic features | DUX4 ribosome footprints profiling and translation efficiency">
 <meta property="og:type" content="book">
 <meta property="og:url" content="https://FredHutch.github.io/DUX4-IFNg-ribosome-footprints/profiling.html">
 <meta property="og:description" content="In this chapter, we used ribosomeProfilingQC::getPsiteCoordinates() to get p-sites coordinates. Due to its large size, the p-sites dataset is not included in the repo. What have been included are...">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Chapter 4 P-sites profiling on genmoic features | DUX4 ribosome footprints profiling and translation efficiency">
+<meta name="twitter:title" content="Chapter 4 P-sites profiling on genomic features | DUX4 ribosome footprints profiling and translation efficiency">
 <meta name="twitter:description" content="In this chapter, we used ribosomeProfilingQC::getPsiteCoordinates() to get p-sites coordinates. Due to its large size, the p-sites dataset is not included in the repo. What have been included are...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
@@ -50,8 +50,8 @@
 <li><a class="" href="index.html"><span class="header-section-number">1</span> About</a></li>
 <li><a class="" href="preprocessing.html"><span class="header-section-number">2</span> Preprocessing Ribosome footprints sequencing data</a></li>
 <li><a class="" href="rpfs-qc.html"><span class="header-section-number">3</span> Ribosome footprints quality control</a></li>
-<li><a class="active" href="profiling.html"><span class="header-section-number">4</span> P-sites profiling on genmoic features</a></li>
-<li><a class="" href="parts.html"><span class="header-section-number">5</span> Parts</a></li>
+<li><a class="active" href="profiling.html"><span class="header-section-number">4</span> P-sites profiling on genomic features</a></li>
+<li><a class="" href="mRNA.html"><span class="header-section-number">5</span> mRNA profiling and DUX4/IFNg induced genes</a></li>
 <li><a class="" href="references.html">References</a></li>
 </ul>
 
@@ -62,7 +62,7 @@
 </div>
   </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="profiling" class="section level1" number="4">
 <h1>
-<span class="header-section-number">4</span> P-sites profiling on genmoic features<a class="anchor" aria-label="anchor" href="#profiling"><i class="fas fa-link"></i></a>
+<span class="header-section-number">4</span> P-sites profiling on genomic features<a class="anchor" aria-label="anchor" href="#profiling"><i class="fas fa-link"></i></a>
 </h1>
 <p>In this chapter, we used <code>ribosomeProfilingQC::getPsiteCoordinates()</code> to get p-sites coordinates. Due to its large size, the <code>p-sites</code> dataset is not included in the repo. What have been included are the the p-sites profiling on gene-based CDS and other transcripts-based genomic features such as 5’ UTR, up/downstream 10 nt from translation start site, 1st exon, and 3’ UTR, saved as <code>DESeqDatSet</code> instances.</p>
 <p>Code chunk below loads libraries and defines local tools:</p>
@@ -274,11 +274,11 @@
 </div>
   <div class="chapter-nav">
 <div class="prev"><a href="rpfs-qc.html"><span class="header-section-number">3</span> Ribosome footprints quality control</a></div>
-<div class="next"><a href="parts.html"><span class="header-section-number">5</span> Parts</a></div>
+<div class="next"><a href="mRNA.html"><span class="header-section-number">5</span> mRNA profiling and DUX4/IFNg induced genes</a></div>
 </div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
-<li><a class="nav-link" href="#profiling"><span class="header-section-number">4</span> P-sites profiling on genmoic features</a></li>
+<li><a class="nav-link" href="#profiling"><span class="header-section-number">4</span> P-sites profiling on genomic features</a></li>
 <li><a class="nav-link" href="#define-genomic-features"><span class="header-section-number">4.1</span> Define genomic features</a></li>
 <li>
 <a class="nav-link" href="#get-p-sites-coordinates"><span class="header-section-number">4.2</span> Get p-sites coordinates</a><ul class="nav navbar-nav">
@@ -303,7 +303,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>DUX4 ribosome footprints profiling and translation efficiency</strong>" was written by Chao-Jen Wong. It was last built on 2022-11-29.</p>
+    <p>"<strong>DUX4 ribosome footprints profiling and translation efficiency</strong>" was written by Chao-Jen Wong. It was last built on 2022-11-30.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
@@ -311,6 +311,34 @@
   </div>
 
 </div></div>
-</footer>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
 </body>
 </html>
