@@ -24,4 +24,6 @@ define-genomic-features
 get-p-sites-coordinates
 profiling-on-cds
 profiling-on-other-genomic-features
-parts
+mRNA
+mrna-profiling
+define-dux4-and-ifn-gamma-induced-genes

@@ -1,4 +1,4 @@
-# P-sites profiling on genmoic features {#profiling}
+# P-sites profiling on genomic features {#profiling}
 
 In this chapter, we used `ribosomeProfilingQC::getPsiteCoordinates()` to get p-sites coordinates. Due to its large size, the `p-sites` dataset is not included in the repo. What have been included are the the p-sites profiling on gene-based CDS and other transcripts-based genomic features such as 5' UTR, up/downstream 10 nt from translation start site, 1st exon, and 3' UTR, saved as `DESeqDatSet` instances.
 
