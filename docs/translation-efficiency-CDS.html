@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Chapter 6 Translation efficiency changes in CDS | DUX4 ribosome footprints profiling and translation efficiency</title>
+<meta name="author" content="Chao-Jen Wong">
+<meta name="description" content="With the ribosome footprint (ribo-seq) and mRNA (RNA-seq) profiling, we applied DESeq2 to calculate the translation efficiency changes between two treatment groups. The contrast model were the log...">
+<meta name="generator" content="bookdown 0.31 with bs4_book()">
+<meta property="og:title" content="Chapter 6 Translation efficiency changes in CDS | DUX4 ribosome footprints profiling and translation efficiency">
+<meta property="og:type" content="book">
+<meta property="og:url" content="https://FredHutch.github.io/DUX4-IFNg-ribosome-footprints/translation-efficiency-CDS.html">
+<meta property="og:description" content="With the ribosome footprint (ribo-seq) and mRNA (RNA-seq) profiling, we applied DESeq2 to calculate the translation efficiency changes between two treatment groups. The contrast model were the log...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 6 Translation efficiency changes in CDS | DUX4 ribosome footprints profiling and translation efficiency">
+<meta name="twitter:description" content="With the ribosome footprint (ribo-seq) and mRNA (RNA-seq) profiling, we applied DESeq2 to calculate the translation efficiency changes between two treatment groups. The contrast model were the log...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Sen-0.4.3/font.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM%20Mono&amp;display=swap" rel="stylesheet">
+<link href="libs/Bitter-0.4.3/font.css" rel="stylesheet">
+<script src="libs/bs3compat-0.4.2/transition.js"></script><script src="libs/bs3compat-0.4.2/tabs.js"></script><script src="libs/bs3compat-0.4.2/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">DUX4 ribosome footprints profiling and translation efficiency</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html"><span class="header-section-number">1</span> About</a></li>
+<li><a class="" href="preprocessing.html"><span class="header-section-number">2</span> Preprocessing Ribosome footprints sequencing data</a></li>
+<li><a class="" href="rpfs-qc.html"><span class="header-section-number">3</span> Ribosome footprints quality control</a></li>
+<li><a class="" href="profiling.html"><span class="header-section-number">4</span> P-sites profiling on genomic features</a></li>
+<li><a class="" href="mRNA.html"><span class="header-section-number">5</span> mRNA profiling and DUX4/IFNg induced genes</a></li>
+<li><a class="active" href="translation-efficiency-CDS.html"><span class="header-section-number">6</span> Translation efficiency changes in CDS</a></li>
+<li><a class="" href="references.html">References</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/FredHutch/DUX4-IFNg-ribosome-footprints">View book source <i class="fas fa-air-freshener"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="translation-efficiency-CDS" class="section level1" number="6">
+<h1>
+<span class="header-section-number">6</span> Translation efficiency changes in CDS<a class="anchor" aria-label="anchor" href="#translation-efficiency-CDS"><i class="fas fa-link"></i></a>
+</h1>
+<p>With the ribosome footprint (ribo-seq) and mRNA (RNA-seq) profiling, we applied <em>DESeq2</em> to calculate the translation efficiency changes between two treatment groups. The contrast model were the log differences between two groups in Ribo-seq and in RNA-seq, and the null hypothesis was defined as</p>
+<p><span class="math display" id="eq:te">\[\begin{equation}
+  H_0: \Bigg| log\left(\frac{treatment 2}{treatment 1}\right)_{ribo-seq} - log\left(\frac{treatment 2}{treatment 1}\right)_{RNA-seq} \Bigg| = 0,
+  \tag{6.1}
+\end{equation}\]</span>
+where the treatment 2 and 1 groups could be DUX-pulse+<span class="math inline">\(IFN_\gamma\)</span> and <span class="math inline">\(IFN_\gamma\)</span>, respectively, or DUX-pulse and untreated.</p>
+<p>In this chapter, we illustrate the steps and code performing the discovery of translation efficiency changes in CDS induced by DUX4 (e.g. DUX-pulse+<span class="math inline">\(IFN_\gamma\)</span> vs. <span class="math inline">\(IFN_\gamma\)</span>.</p>
+<div id="steps" class="section level2" number="6.1">
+<h2>
+<span class="header-section-number">6.1</span> Steps<a class="anchor" aria-label="anchor" href="#steps"><i class="fas fa-link"></i></a>
+</h2>
+<ol style="list-style-type: decimal">
+<li>Define genomic features: gene-based CDS; transcript-based features including 5’ UTR, 13 nts up/downstream from translation start sites, first exons, and 3’ UTR.<br>
+</li>
+<li>Non-specific filtering:</li>
+</ol>
+<ul>
+<li>Exclude 92 histone1 (H1) and histone 2 (H2) variants and DUX4-and <span class="math inline">\(IFN_\gamma\)</span>-induced genes (Chapter <a href="mRNA.html#mRNA">5</a>)<br>
+</li>
+<li>loose base-mean filtering for both RNA-seq and ribo-seq<br>
+</li>
+</ul>
+<ol start="3" style="list-style-type: decimal">
+<li>Pre-estimate size factor: if the library sizes of RNA-seq and ribo-seq are vastly different, we recommend to pre-estimate the size factor separately using DESeq2 and the p-site counts (ribo-seq) and gene counts (RNA-seq), particularly, on CDS, disregard which genomic features you are account for.<br>
+</li>
+<li>DESeq2: the threshold is set to adjusted <span class="math inline">\(p\)</span>-value &lt; 0.05 and <span class="math inline">\(|logFC| &gt; 1\)</span>
+</li>
+<li>GO term analysis for down-regulated translation changes</li>
+</ol>
+<p>The flowchart below demonstrates the workflow and results:</p>
+<div class="inline-figure"><img src="images/flowchart-translation-changes.png" class="cover" width="700" height="1400/"></div>
+</div>
+<div id="load-libraries-and-define-parameters" class="section level2" number="6.2">
+<h2>
+<span class="header-section-number">6.2</span> Load libraries and define parameters<a class="anchor" aria-label="anchor" href="#load-libraries-and-define-parameters"><i class="fas fa-link"></i></a>
+</h2>
+<p>Note that the main directory is named <code>pkg_dir</code>, and here, it is set to our local path. The following code chunks in the chapter are extracted from <a href="https://github.com/FredHutch/DUX4-IFNg-ribosome-footprints//scripts/060-translation-changes.R">here</a>.</p>
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mikelove/DESeq2">DESeq2</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://readxl.tidyverse.org">readxl</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://docs.ropensci.org/writexl/">writexl</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tidymodels/corrr">corrr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">plyranges</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/karthik/wesanderson">wesanderson</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">goseq</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">org.Hs.eg.db</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">hg38.HomoSapiens.Gencode.v35</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">gene.anno</span><span class="op">)</span></span>
+<span><span class="va">txdb</span> <span class="op">&lt;-</span> <span class="va">hg38.HomoSapiens.Gencode.v35</span></span>
+<span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/Bioconductor/BiocParallel">BiocParallel</a></span><span class="op">)</span></span>
+<span><span class="va">bp_param</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/MulticoreParam-class.html">MulticoreParam</a></span><span class="op">(</span>workers <span class="op">=</span> <span class="fl">4L</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html">register</a></span><span class="op">(</span><span class="va">bp_param</span>, default<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># define parameters</span></span>
+<span><span class="va">pkg_dir</span> <span class="op">&lt;-</span> <span class="st">"~/CompBio/DUX4-IFNg-ribosome-footprints"</span></span>
+<span><span class="va">stats_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">pkg_dir</span>, <span class="st">"stats"</span>, <span class="st">"translation_changes"</span>, <span class="st">"CDS"</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">pkg_dir</span>, <span class="st">"scripts"</span>, <span class="st">"06A-tools_TE.R"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">pkg_dir</span>, <span class="st">"scripts"</span>, <span class="st">"tools.R"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/load.html">load</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">pkg_dir</span>, <span class="st">"data"</span>, <span class="st">"dds_cds_by_gene.rda"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">my_color</span> <span class="op">&lt;-</span> <span class="fu">wesanderson</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/wesanderson/man/wes_palette.html">wes_palette</a></span><span class="op">(</span><span class="st">"Darjeeling1"</span>, n<span class="op">=</span><span class="fl">5</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">my_color</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Factor-class.html">levels</a></span><span class="op">(</span><span class="va">dds_cds_by_gene</span><span class="op">$</span><span class="va">treatment</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># define comparison groups</span></span>
+<span><span class="va">list_comp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>S1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"untreated"</span>, <span class="st">"DOX_pulse"</span><span class="op">)</span>,</span>
+<span>                  S2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"untreated"</span>, <span class="st">"IFNg"</span><span class="op">)</span>,</span>
+<span>                  S3 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"untreated"</span>, <span class="st">"DOX_pulse_IFNg"</span><span class="op">)</span>,</span>
+<span>                  S4 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"IFNg"</span>, <span class="st">"DOX_pulse"</span><span class="op">)</span>,</span>
+<span>                  S5 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"DOX_pulse"</span>, <span class="st">"DOX_pulse_IFNg"</span><span class="op">)</span>,</span>
+<span>                  S6 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"IFNg"</span>, <span class="st">"DOX_pulse_IFNg"</span> <span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>Loading data sets:</p>
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#</span></span>
+<span><span class="co"># load rse by genes</span></span>
+<span><span class="co">#</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/load.html">load</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">pkg_dir</span>, <span class="st">"data"</span>, <span class="st">"rse_cds_by_gene.rda"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/load.html">load</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">pkg_dir</span>, <span class="st">"data"</span>, <span class="st">"rse_cds_mRNA.rda"</span><span class="op">)</span><span class="op">)</span> <span class="co"># cds by genes</span></span>
+<span></span>
+<span><span class="co">#</span></span>
+<span><span class="co"># load DUX4_altered and INFg_altered</span></span>
+<span><span class="co">#</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/load.html">load</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">pkg_dir</span>, <span class="st">"data"</span>, <span class="st">"DUX4_induced_v2.rda"</span><span class="op">)</span><span class="op">)</span> <span class="co"># LFC &gt; 1</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/load.html">load</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">pkg_dir</span>, <span class="st">"data"</span>, <span class="st">"IFNg_induced_v2.rda"</span><span class="op">)</span><span class="op">)</span> <span class="co"># LFC &gt; 1</span></span>
+<span></span>
+<span><span class="co">#</span></span>
+<span><span class="co"># identify H1 and H2 variants and PSM subunits</span></span>
+<span><span class="co">#</span></span>
+<span><span class="va">histone_variants</span> <span class="op">&lt;-</span> <span class="fu">.histone_variants</span><span class="op">(</span><span class="va">gene.anno</span><span class="op">)</span></span>
+<span><span class="va">exclude_gene</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">histone_variants</span><span class="op">$</span><span class="va">gene_id</span>, <span class="va">DUX4_induced_v2</span><span class="op">$</span><span class="va">ensembl</span><span class="op">)</span></span>
+<span><span class="va">psm_name</span> <span class="op">&lt;-</span> <span class="fu">readxl</span><span class="fu">::</span><span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html">read_xlsx</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">pkg_dir</span>, <span class="st">"extdata"</span>, <span class="st">"Gene Lists_Proteasome_MHC-I.xlsx"</span><span class="op">)</span>,</span>
+<span>                              sheet<span class="op">=</span><span class="fl">1</span>, range<span class="op">=</span><span class="st">"A4:B49"</span><span class="op">)</span> </span>
+<span><span class="va">PSM</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="va">gene.anno</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">gene_name</span>, <span class="va">gene_id</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">gene_name</span> <span class="op"><a href="https://rdrr.io/pkg/BiocGenerics/man/match.html">%in%</a></span> <span class="va">psm_name</span><span class="op">$</span><span class="va">Symbol</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="dux4ifn_gamma-vs.-ifn_gamma-in-cds" class="section level2" number="6.3">
+<h2>
+<span class="header-section-number">6.3</span> DUX4+<span class="math inline">\(IFN_\gamma\)</span> vs. <span class="math inline">\(IFN_\gamma\)</span> in CDS<a class="anchor" aria-label="anchor" href="#dux4ifn_gamma-vs.-ifn_gamma-in-cds"><i class="fas fa-link"></i></a>
+</h2>
+<p>The code chunks below performs the discovery of translation efficiency changes induced by DUX4 in CDS.</p>
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># S6: use .comb_RNA_Ribo to combine mRNA and ribosome profilings and </span></span>
+<span><span class="co"># define design matrix to be used by DESeq2</span></span>
+<span><span class="va">dds_S6</span> <span class="op">&lt;-</span> <span class="fu">.comb_RNA_Ribo</span><span class="op">(</span>rse_rna <span class="op">=</span> <span class="va">rse_cds_mRNA</span>, </span>
+<span>                         rse_ribo <span class="op">=</span> <span class="va">rse_cds_by_gene</span>, </span>
+<span>                         treatments<span class="op">=</span><span class="va">list_comp</span><span class="op">[[</span><span class="st">"S6"</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>                         rna_mean_filter<span class="op">=</span><span class="fl">10</span>, ribo_mean_filter<span class="op">=</span><span class="fl">5</span><span class="op">)</span></span>
+<span><span class="va">dds_S6</span> <span class="op">&lt;-</span> <span class="va">dds_S6</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html">rownames</a></span><span class="op">(</span><span class="va">dds_S6</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/pkg/BiocGenerics/man/match.html">%in%</a></span> <span class="va">exclude_gene</span><span class="op">]</span>        </span>
+<span><span class="va">dds_S6</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/DESeq2/man/DESeq.html">DESeq</a></span><span class="op">(</span><span class="va">dds_S6</span><span class="op">)</span></span>
+<span><span class="co">#resultsNames(dds_S6)</span></span>
+<span><span class="va">S6_ribo_over_rna</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/DESeq2/man/results.html">results</a></span><span class="op">(</span><span class="va">dds_S6</span>, </span>
+<span>                            name<span class="op">=</span><span class="st">"protocolRibo.treatmentDOX_pulse_IFNg"</span>, </span>
+<span>                            alpha<span class="op">=</span><span class="fl">0.05</span><span class="op">)</span> <span class="co"># translation efficiency changes</span></span>
+<span><span class="va">S6_rna</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/DESeq2/man/results.html">results</a></span><span class="op">(</span><span class="va">dds_S6</span>, </span>
+<span>                  name<span class="op">=</span><span class="st">"treatment_DOX_pulse_IFNg_vs_IFNg"</span>, alpha<span class="op">=</span><span class="fl">0.05</span><span class="op">)</span>  </span>
+<span><span class="va">S6_ribo</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/DESeq2/man/results.html">results</a></span><span class="op">(</span><span class="va">dds_S6</span>, </span>
+<span>                   contrast<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"treatment_DOX_pulse_IFNg_vs_IFNg"</span>,</span>
+<span>                                   <span class="st">"protocolRibo.treatmentDOX_pulse_IFNg"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>                   alpha<span class="op">=</span><span class="fl">0.05</span><span class="op">)</span></span></code></pre></div>
+<p>Tidy the result and make a scatter plot for the log fold changes between DUX-pulse and <span class="math inline">\(IFN_\gamma\)</span> in ribo-seq and in RNA-seq.</p>
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># tidy the results and exclude DUX4-induced genes</span></span>
+<span><span class="va">tidy_S6_v2</span> <span class="op">&lt;-</span> <span class="fu">.tidy_res_ribo_over_rna</span><span class="op">(</span>dds<span class="op">=</span><span class="va">dds_S6</span>, </span>
+<span>                                      inter_res<span class="op">=</span><span class="va">S6_ribo_over_rna</span>, </span>
+<span>                                      ribo_res<span class="op">=</span><span class="va">S6_ribo</span>, rna_res<span class="op">=</span><span class="va">S6_rna</span>,</span>
+<span>                                      alpha<span class="op">=</span><span class="fl">0.05</span>, lfc_threshold<span class="op">=</span><span class="fl">1</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>             <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="va">ensembl</span> <span class="op"><a href="https://rdrr.io/pkg/BiocGenerics/man/match.html">%in%</a></span> <span class="va">DUX4_induced_v2</span><span class="op">$</span><span class="va">ensembl</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>             <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>IFNg_induced_v2 <span class="op">=</span> <span class="va">ensembl</span> <span class="op"><a href="https://rdrr.io/pkg/BiocGenerics/man/match.html">%in%</a></span> <span class="va">IFNg_induced_v2</span><span class="op">$</span><span class="va">ensembl</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># scatter plot between log2FC in ribo-seq and in RNA-seq</span></span>
+<span><span class="va">res</span> <span class="op">&lt;-</span> <span class="va">tidy_S6_v2</span></span>
+<span><span class="va">msg_up</span>   <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span><span class="st">"log2(Ribo / RNA) &gt; 1: %4.0f"</span>, <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">status</span> <span class="op">==</span> <span class="st">"up"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">msg_down</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span><span class="st">"log2(Ribo / RNA) &lt; -1: %4.0f"</span>, <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">status</span> <span class="op">==</span> <span class="st">"down"</span><span class="op">)</span><span class="op">)</span>  </span>
+<span><span class="va">pearson</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.html">cor</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">rna_lfc</span>, <span class="va">res</span><span class="op">$</span><span class="va">ribo_lfc</span><span class="op">)</span>             </span>
+<span><span class="va">label_x_pos</span> <span class="op">&lt;-</span> <span class="fl">0</span> </span>
+<span><span class="va">label_y_pos</span> <span class="op">&lt;-</span> <span class="op">-</span><span class="fl">2.5</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">res</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">rna_lfc</span>, y<span class="op">=</span><span class="va">ribo_lfc</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>size<span class="op">=</span><span class="fl">2</span>, alpha<span class="op">=</span><span class="fl">0.5</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>color<span class="op">=</span><span class="va">status</span>, shape<span class="op">=</span><span class="va">IFNg_induced_v2</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/annotate.html">annotate</a></span><span class="op">(</span><span class="st">"text"</span>, x<span class="op">=</span><span class="va">label_x_pos</span>, y<span class="op">=</span><span class="va">label_y_pos</span>, label<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"Pearson = "</span>, <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/format.html">format</a></span><span class="op">(</span><span class="va">pearson</span>, digit<span class="op">=</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>           hjust <span class="op">=</span> <span class="fl">0</span>, vjust<span class="op">=</span><span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/annotate.html">annotate</a></span><span class="op">(</span><span class="st">"text"</span>, x<span class="op">=</span><span class="va">label_x_pos</span>, y<span class="op">=</span><span class="va">label_y_pos</span><span class="op">-</span><span class="fl">0.4</span>, label<span class="op">=</span><span class="va">msg_up</span>, color<span class="op">=</span><span class="st">"red"</span>, </span>
+<span>           hjust <span class="op">=</span> <span class="fl">0</span>, vjust<span class="op">=</span><span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/annotate.html">annotate</a></span><span class="op">(</span><span class="st">"text"</span>, x<span class="op">=</span><span class="va">label_x_pos</span>, y<span class="op">=</span><span class="va">label_y_pos</span><span class="op">-</span><span class="fl">0.8</span>, label<span class="op">=</span><span class="va">msg_down</span>, </span>
+<span>           color<span class="op">=</span><span class="st">"blue"</span>, hjust<span class="op">=</span><span class="fl">0</span>, vjust<span class="op">=</span><span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_color_manual</a></span><span class="op">(</span>values<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"gray75"</span>, <span class="st">"red"</span>, <span class="st">"blue"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_shape_manual</a></span><span class="op">(</span>values<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">19</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>panel.grid.minor <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span><span class="op">(</span><span class="op">)</span>, </span>
+<span>        plot.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>hjust <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span>, </span>
+<span>        legend.position<span class="op">=</span><span class="st">"bottom"</span>, legend.box<span class="op">=</span><span class="st">"vertical"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/bquote.html">bquote</a></span><span class="op">(</span><span class="op">~</span><span class="st">"RNA-seq:"</span> <span class="op">~</span><span class="va">log</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">~</span><span class="st">"(DOX_pulse_IFNg / IFNg)"</span><span class="op">)</span>, </span>
+<span>       y<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/bquote.html">bquote</a></span><span class="op">(</span><span class="op">~</span><span class="st">"Ribo-seq:"</span> <span class="op">~</span><span class="va">log</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">~</span><span class="st">"(DOX_pulse_IFNg / IFNg)"</span><span class="op">)</span>, </span>
+<span>       title<span class="op">=</span><span class="st">"Ribo-seq vs. RNA-seq (exclude DUX4-induced)"</span>, shape<span class="op">=</span><span class="st">"IFNg-induced"</span><span class="op">)</span> </span></code></pre></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:tidy-and-viz-S6-results"></span>
+<img src="05-translation-efficiency-CDS_files/figure-html/tidy-and-viz-S6-results-1.png" alt="Scatter plot of log fold changes between DUX-pulse and IFN in ribo-seq and in RNA-seq. Blue dots indicate down-regulated translation efficiency changes and red up-regulated." width="672"><p class="caption">
+Figure 6.1: Scatter plot of log fold changes between DUX-pulse and IFN in ribo-seq and in RNA-seq. Blue dots indicate down-regulated translation efficiency changes and red up-regulated.
+</p>
+</div>
+</div>
+<div id="go-term-analysis" class="section level2" number="6.4">
+<h2>
+<span class="header-section-number">6.4</span> GO term analysis<a class="anchor" aria-label="anchor" href="#go-term-analysis"><i class="fas fa-link"></i></a>
+</h2>
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># take down-regulated translation efficiency and use goseq to find the</span></span>
+<span><span class="co"># affected GO terms. Display the top 10.</span></span>
+<span><span class="va">interested</span> <span class="op">&lt;-</span> <span class="va">tidy_S6_v2</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">status</span><span class="op">==</span><span class="st">"down"</span><span class="op">)</span></span>
+<span><span class="va">universal</span> <span class="op">&lt;-</span> <span class="va">tidy_S6_v2</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html">pull</a></span><span class="op">(</span><span class="va">ensembl</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_replace.html">str_replace</a></span><span class="op">(</span><span class="st">"\\..*"</span>, <span class="st">""</span><span class="op">)</span></span>
+<span><span class="va">selected</span> <span class="op">&lt;-</span> <span class="va">interested</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html">pull</a></span><span class="op">(</span><span class="va">ensembl</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_replace.html">str_replace</a></span><span class="op">(</span><span class="st">"\\..*"</span>, <span class="st">""</span><span class="op">)</span></span>
+<span><span class="va">enriched_go</span> <span class="op">&lt;-</span> <span class="fu">.do_goseq</span><span class="op">(</span>universal<span class="op">=</span><span class="va">universal</span>, selected_gene<span class="op">=</span><span class="va">selected</span>,  p_value<span class="op">=</span><span class="fl">0.3</span>,</span>
+<span>                         return.DEInCat<span class="op">=</span><span class="cn">FALSE</span>, dds<span class="op">=</span><span class="va">dds_S6</span><span class="op">)</span></span>
+<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="va">enriched_go</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="op">]</span>, caption<span class="op">=</span><span class="st">"Top 10 enriched GO terms determined by down-regulated translation efficiency induced by DUX4."</span> <span class="op">)</span></span></code></pre></div>
+<div class="inline-table"><table class="table table-sm">
+<caption>
+<span id="tab:goseq-S6">Table 6.1: </span>Top 10 enriched GO terms determined by down-regulated translation efficiency induced by DUX4.</caption>
+<colgroup>
+<col width="8%">
+<col width="17%">
+<col width="8%">
+<col width="6%">
+<col width="45%">
+<col width="6%">
+<col width="7%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">category</th>
+<th align="right">over_represented_pvalue</th>
+<th align="right">numDEInCat</th>
+<th align="right">numInCat</th>
+<th align="left">term</th>
+<th align="left">ontology</th>
+<th align="right">padj</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left"><a href="GO:0019219" class="uri">GO:0019219</a></td>
+<td align="right">0.0000025</td>
+<td align="right">60</td>
+<td align="right">2702</td>
+<td align="left">regulation of nucleobase-containing compound metabolic process</td>
+<td align="left">BP</td>
+<td align="right">0.0232240</td>
+</tr>
+<tr class="even">
+<td align="left"><a href="GO:0051252" class="uri">GO:0051252</a></td>
+<td align="right">0.0000033</td>
+<td align="right">56</td>
+<td align="right">2466</td>
+<td align="left">regulation of RNA metabolic process</td>
+<td align="left">BP</td>
+<td align="right">0.0232240</td>
+</tr>
+<tr class="odd">
+<td align="left"><a href="GO:0006355" class="uri">GO:0006355</a></td>
+<td align="right">0.0000562</td>
+<td align="right">49</td>
+<td align="right">2239</td>
+<td align="left">regulation of DNA-templated transcription</td>
+<td align="left">BP</td>
+<td align="right">0.1278336</td>
+</tr>
+<tr class="even">
+<td align="left"><a href="GO:1903506" class="uri">GO:1903506</a></td>
+<td align="right">0.0000578</td>
+<td align="right">49</td>
+<td align="right">2241</td>
+<td align="left">regulation of nucleic acid-templated transcription</td>
+<td align="left">BP</td>
+<td align="right">0.1278336</td>
+</tr>
+<tr class="odd">
+<td align="left"><a href="GO:2001141" class="uri">GO:2001141</a></td>
+<td align="right">0.0000625</td>
+<td align="right">49</td>
+<td align="right">2248</td>
+<td align="left">regulation of RNA biosynthetic process</td>
+<td align="left">BP</td>
+<td align="right">0.1278336</td>
+</tr>
+<tr class="even">
+<td align="left"><a href="GO:0045605" class="uri">GO:0045605</a></td>
+<td align="right">0.0000644</td>
+<td align="right">3</td>
+<td align="right">6</td>
+<td align="left">negative regulation of epidermal cell differentiation</td>
+<td align="left">BP</td>
+<td align="right">0.1278336</td>
+</tr>
+<tr class="odd">
+<td align="left"><a href="GO:0045683" class="uri">GO:0045683</a></td>
+<td align="right">0.0000644</td>
+<td align="right">3</td>
+<td align="right">6</td>
+<td align="left">negative regulation of epidermis development</td>
+<td align="left">BP</td>
+<td align="right">0.1278336</td>
+</tr>
+<tr class="even">
+<td align="left"><a href="GO:0006351" class="uri">GO:0006351</a></td>
+<td align="right">0.0000857</td>
+<td align="right">50</td>
+<td align="right">2339</td>
+<td align="left">DNA-templated transcription</td>
+<td align="left">BP</td>
+<td align="right">0.1346224</td>
+</tr>
+<tr class="odd">
+<td align="left"><a href="GO:0097659" class="uri">GO:0097659</a></td>
+<td align="right">0.0000872</td>
+<td align="right">50</td>
+<td align="right">2340</td>
+<td align="left">nucleic acid-templated transcription</td>
+<td align="left">BP</td>
+<td align="right">0.1346224</td>
+</tr>
+<tr class="even">
+<td align="left"><a href="GO:0032774" class="uri">GO:0032774</a></td>
+<td align="right">0.0001018</td>
+<td align="right">50</td>
+<td align="right">2355</td>
+<td align="left">RNA biosynthetic process</td>
+<td align="left">BP</td>
+<td align="right">0.1414823</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="mRNA.html"><span class="header-section-number">5</span> mRNA profiling and DUX4/IFNg induced genes</a></div>
+<div class="next"><a href="references.html">References</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#translation-efficiency-CDS"><span class="header-section-number">6</span> Translation efficiency changes in CDS</a></li>
+<li><a class="nav-link" href="#steps"><span class="header-section-number">6.1</span> Steps</a></li>
+<li><a class="nav-link" href="#load-libraries-and-define-parameters"><span class="header-section-number">6.2</span> Load libraries and define parameters</a></li>
+<li><a class="nav-link" href="#dux4ifn_gamma-vs.-ifn_gamma-in-cds"><span class="header-section-number">6.3</span> DUX4+\(IFN_\gamma\) vs. \(IFN_\gamma\) in CDS</a></li>
+<li><a class="nav-link" href="#go-term-analysis"><span class="header-section-number">6.4</span> GO term analysis</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/FredHutch/DUX4-IFNg-ribosome-footprints/blob/main/book/05-translation-efficiency-CDS.Rmd">View source <i class="fas fa-air-freshener"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/FredHutch/DUX4-IFNg-ribosome-footprints/edit/main/book/05-translation-efficiency-CDS.Rmd">Edit this page <i class="fas fa-air-freshener"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>DUX4 ribosome footprints profiling and translation efficiency</strong>" was written by Chao-Jen Wong. It was last built on 2022-12-21.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
+</body>
+</html>

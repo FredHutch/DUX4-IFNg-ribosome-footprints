@@ -1,0 +1,157 @@
+# Translation efficiency changes in CDS {#translation-efficiency-CDS}
+With the ribosome footprint (ribo-seq) and mRNA (RNA-seq) profiling, we applied _DESeq2_ to calculate the translation efficiency changes between two treatment groups. The contrast model were the log differences between two groups in Ribo-seq and in RNA-seq, and the null hypothesis was defined as 
+
+\begin{equation} 
+  H_0: \Bigg| log\left(\frac{treatment 2}{treatment 1}\right)_{ribo-seq} - log\left(\frac{treatment 2}{treatment 1}\right)_{RNA-seq} \Bigg| = 0,
+  (\#eq:te)
+\end{equation} 
+where the treatment 2 and 1 groups could be DUX-pulse+$IFN_\gamma$ and $IFN_\gamma$, respectively, or DUX-pulse and untreated.
+
+In this chapter, we illustrate the steps and code performing the discovery of translation efficiency changes in CDS induced by DUX4 (e.g. DUX-pulse+$IFN_\gamma$ vs. $IFN_\gamma$. 
+
+
+## Steps
+
+1. Define genomic features: gene-based CDS; transcript-based features including 5' UTR, 13 nts up/downstream from translation start sites, first exons, and 3' UTR.   
+2. Non-specific filtering: 
+  - Exclude 92 histone1 (H1) and histone 2 (H2) variants and DUX4-and $IFN_\gamma$-induced genes (Chapter \@ref(mRNA))  
+  - loose base-mean filtering for both RNA-seq and ribo-seq  
+3. Pre-estimate size factor: if the library sizes of RNA-seq and ribo-seq are vastly different, we recommend to pre-estimate the size factor separately using DESeq2 and the p-site counts (ribo-seq) and gene counts (RNA-seq), particularly, on CDS, disregard which genomic features you are account for.   
+4. DESeq2: the threshold is set to adjusted $p$-value < 0.05 and $|logFC| > 1$
+5. GO term analysis for down-regulated translation changes
+
+The flowchart below demonstrates the workflow and results:
+
+<img src="images/flowchart-translation-changes.png" class="cover" width=700 height=1400/>
+
+
+## Load libraries and define parameters
+Note that the main directory is named `pkg_dir`, and here, it is set to our local path. The following code chunks in the chapter are extracted from [here](https://github.com/FredHutch/DUX4-IFNg-ribosome-footprints//scripts/060-translation-changes.R).
+
+```{r setup-5, include=FALSE}
+knitr::opts_chunk$set(eval = TRUE, message=FALSE)
+```
+
+```{r load-libs}
+library(DESeq2)
+library(readxl)
+library(writexl)
+library(tidyverse)
+library(corrr)
+library(plyranges)
+library(wesanderson)
+library(goseq)
+library(hg38.HomoSapiens.Gencode.v35)
+data(gene.anno)
+txdb <- hg38.HomoSapiens.Gencode.v35
+
+library(BiocParallel)
+bp_param=MulticoreParam(workers = 4L)
+register(bp_param, default=TRUE)
+```
+
+```{r define-parameters}
+# define parameters
+pkg_dir <- "~/CompBio/DUX4-IFNg-ribosome-footprints"
+stats_dir <- file.path(pkg_dir, "stats", "translation_changes", "CDS")
+source(file.path(pkg_dir, "scripts", "06A-tools_TE.R"))
+source(file.path(pkg_dir, "scripts", "tools.R"))
+load(file.path(pkg_dir, "data", "dds_cds_by_gene.rda"))
+
+my_color <- wesanderson::wes_palette("Darjeeling1", n=5)[2:5]
+names(my_color) <- levels(dds_cds_by_gene$treatment)
+
+# define comparison groups
+list_comp <- list(S1 = c("untreated", "DOX_pulse"),
+                  S2 = c("untreated", "IFNg"),
+                  S3 = c("untreated", "DOX_pulse_IFNg"),
+                  S4 = c("IFNg", "DOX_pulse"),
+                  S5 = c("DOX_pulse", "DOX_pulse_IFNg"),
+                  S6 = c("IFNg", "DOX_pulse_IFNg" ))
+```
+
+Loading data sets:
+```{r load-data-sets}
+#
+# load rse by genes
+#
+load(file.path(pkg_dir, "data", "rse_cds_by_gene.rda"))
+load(file.path(pkg_dir, "data", "rse_cds_mRNA.rda")) # cds by genes
+
+#
+# load DUX4_altered and INFg_altered
+#
+load(file.path(pkg_dir, "data", "DUX4_induced_v2.rda")) # LFC > 1
+load(file.path(pkg_dir, "data", "IFNg_induced_v2.rda")) # LFC > 1
+
+#
+# identify H1 and H2 variants and PSM subunits
+#
+histone_variants <- .histone_variants(gene.anno)
+exclude_gene <- c(histone_variants$gene_id, DUX4_induced_v2$ensembl)
+psm_name <- readxl::read_xlsx(file.path(pkg_dir, "extdata", "Gene Lists_Proteasome_MHC-I.xlsx"),
+                              sheet=1, range="A4:B49") 
+PSM <- as.data.frame(gene.anno) %>% dplyr::select(gene_name, gene_id) %>%
+  dplyr::filter(gene_name %in% psm_name$Symbol)
+```
+
+## DUX4+$IFN_\gamma$ vs. $IFN_\gamma$ in CDS
+The code chunks below performs the discovery of translation efficiency changes induced by DUX4 in CDS. 
+
+```{r translation-changes-S6}
+# S6: use .comb_RNA_Ribo to combine mRNA and ribosome profilings and 
+# define design matrix to be used by DESeq2
+dds_S6 <- .comb_RNA_Ribo(rse_rna = rse_cds_mRNA, 
+                         rse_ribo = rse_cds_by_gene, 
+                         treatments=list_comp[["S6"]],
+                         rna_mean_filter=10, ribo_mean_filter=5)
+dds_S6 <- dds_S6[!rownames(dds_S6) %in% exclude_gene]        
+dds_S6 <- DESeq(dds_S6)
+#resultsNames(dds_S6)
+S6_ribo_over_rna <- results(dds_S6, 
+                            name="protocolRibo.treatmentDOX_pulse_IFNg", 
+                            alpha=0.05) # translation efficiency changes
+S6_rna <- results(dds_S6, 
+                  name="treatment_DOX_pulse_IFNg_vs_IFNg", alpha=0.05)  
+S6_ribo <- results(dds_S6, 
+                   contrast=list(c("treatment_DOX_pulse_IFNg_vs_IFNg",
+                                   "protocolRibo.treatmentDOX_pulse_IFNg")),
+                   alpha=0.05)
+```
+
+Tidy the result and make a scatter plot for the log fold changes between DUX-pulse and $IFN_\gamma$ in ribo-seq and in RNA-seq.
+```{r tidy-and-viz-S6-results, fig.cap="Scatter plot of log fold changes between DUX-pulse and IFN in ribo-seq and in RNA-seq. Blue dots indicate down-regulated translation efficiency changes and red up-regulated.", fig.align='center'}
+# tidy the results and exclude DUX4-induced genes
+tidy_S6_v2 <- .tidy_res_ribo_over_rna(dds=dds_S6, 
+                                      inter_res=S6_ribo_over_rna, 
+                                      ribo_res=S6_ribo, rna_res=S6_rna,
+                                      alpha=0.05, lfc_threshold=1) %>%
+             dplyr::filter(!ensembl %in% DUX4_induced_v2$ensembl) %>%
+             dplyr::mutate(IFNg_induced_v2 = ensembl %in% IFNg_induced_v2$ensembl)
+
+# scatter plot between log2FC in ribo-seq and in RNA-seq
+res <- tidy_S6_v2
+msg_up   <- sprintf("log2(Ribo / RNA) > 1: %4.0f", sum(res$status == "up"))
+msg_down <- sprintf("log2(Ribo / RNA) < -1: %4.0f", sum(res$status == "down"))  
+pearson <- cor(res$rna_lfc, res$ribo_lfc)             
+label_x_pos <- 0 
+label_y_pos <- -2.5
+
+ggplot(res, aes(x=rna_lfc, y=ribo_lfc)) +
+  geom_point(size=2, alpha=0.5, aes(color=status, shape=IFNg_induced_v2)) +
+  theme_bw() +
+  annotate("text", x=label_x_pos, y=label_y_pos, label=paste0("Pearson = ", format(pearson, digit=2)),
+           hjust = 0, vjust=1) +
+  annotate("text", x=label_x_pos, y=label_y_pos-0.4, label=msg_up, color="red", 
+           hjust = 0, vjust=1) +
+  annotate("text", x=label_x_pos, y=label_y_pos-0.8, label=msg_down, 
+           color="blue", hjust=0, vjust=1) +
+  scale_color_manual(values=c("gray75", "red", "blue")) + 
+  scale_shape_manual(values=c(19, 1)) +
+  theme(panel.grid.minor = element_blank(), 
+        plot.title = element_text(hjust = 0.5), 
+        legend.position="bottom", legend.box="vertical") +
+  labs(x=bquote(~"RNA-seq:" ~log[2]~"(DOX_pulse_IFNg / IFNg)"), 
+       y=bquote(~"Ribo-seq:" ~log[2]~"(DOX_pulse_IFNg / IFNg)"), 
+       title="Ribo-seq vs. RNA-seq (exclude DUX4-induced)", shape="IFNg-induced") 
+```
