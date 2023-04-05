@@ -2,7 +2,7 @@
 ```{r setup-3, include=FALSE}
 knitr::opts_chunk$set(eval = FALSE)
 ```
-In this chapter, we used `ribosomeProfilingQC::getPsiteCoordinates()` to get p-sites coordinates. Due to its large size, the `p-sites` dataset is not included in the repo. What have been included are the the p-sites profiling on gene-based CDS and other transcripts-based genomic features such as 5' UTR, up/downstream 10 nt from translation start site, 1st exon, and 3' UTR, saved as `DESeqDatSet` instances.
+In this chapter, we used `ribosomeProfilingQC::getPsiteCoordinates()` to get p-sites coordinates. Due to its large size, the `p-sites` dataset is not included in the repo. However, we do include the p-sites profiling on gene-based CDS and transcripts-based genomic features such as 5' UTR, 13 nts up/downstream from translation start site, 1st exon, and 3' UTR, saved as `DESeqDatSet` instances.
 
 Code chunk below loads libraries and defines local tools:
 ```{r profiling-preparation, eval=FALSE}
@@ -29,8 +29,10 @@ ignore.strand <- FALSE
   colData(rse) <- colData(dds_cds_by_gene)
   # rowData: tx_name -> gene_id, gene_name, gene_type
   tx_name <- rownames(rse)
-  df <- AnnotationDbi::select(txdb, keys=tx_name, columns="GENEID", keytype="TXNAME",
-                              multiVals="first") %>% as.data.frame() %>%
+  df <- AnnotationDbi::select(txdb, keys=tx_name, columns="GENEID", 
+                              keytype="TXNAME",
+                              multiVals="first") %>% 
+    as.data.frame() %>%
     dplyr::distinct(TXNAME, .keep_all=TRUE) %>%
     dplyr::rename(tx_name=TXNAME, gene_id=GENEID) %>%
     dplyr::left_join(as.data.frame(gene.anno), by="gene_id") %>%
@@ -43,7 +45,7 @@ ignore.strand <- FALSE
 ```
 
 ## Define genomic features
-Code chunk below defines the annotated transcript-based genomic features of 5'UTR, around translation start site (13 up/downstream from TSS), first exons, and 3' UTR.
+Code chunk below defines the annotated transcript-based genomic features of 5'UTR, 13 nts up/downstream from translation start sites, first exons, and 3' UTR; all features are kept unique. 
 ```{r define-genomic-features}
 #
 # define features
@@ -52,13 +54,15 @@ feature_5p  <- fiveUTRsByTranscript(txdb, use.name=TRUE)
 feature_3p  <- threeUTRsByTranscript(txdb, use.name=TRUE)
 feature_cds <- cdsBy(txdb, by="tx", use.name=TRUE)
 
+# ensure to just include unique UTRs
 .unique_UTRs <- function(utrs) {
     # exclude UTRs that are not unique
     exons_names_by_tx <- bplapply(utrs, function(gr)
       paste(gr$exon_name, collapse=","))
-    keep_tx <- as.data.frame(unlist(exons_names_by_tx)) %>% rownames_to_column(var="tx_name") %>%
-                 dplyr::rename(exons_names=`unlist(exons_names_by_tx)`) %>%
-                 dplyr::distinct(exons_names, .keep_all=TRUE)
+    keep_tx <- as.data.frame(unlist(exons_names_by_tx)) %>%
+      rownames_to_column(var="tx_name") %>%
+      dplyr::rename(exons_names=`unlist(exons_names_by_tx)`) %>%
+      dplyr::distinct(exons_names, .keep_all=TRUE)
     utrs[keep_tx$tx_name]                 
 }
 
@@ -89,11 +93,11 @@ tx_based_features <- list(feature_5p=unique_feature_5p,
                           feature_3p = unique_feature_3p,
                           first_exon = first_exon, 
                           around_TSS = around_TSS)
-save(tx_based_features, file=file.path(pkg_dir, "data", "tx_based_features.rda"))                          
+save(tx_based_features, file=file.path(pkg_dir, "data", "tx_based_features.rda"))     
 ```
 
 ## Get p-sites coordinates
-Code chunk below uses `ribosomeProfilingQC::getPsiteCoordinates()` to get p-sites coordinates and save as `p_sites.rda`.
+Here we kept the footprints with dominant lengths 26 to 29 and used the previously-defined offset 13 to get the p-sites coordinates of the ribosome footprints, using `ribosomeProfilingQC::getPsiteCoordinates()`.
 
 ```{r get-p-sites, eval=FALSE}
 ignore.strand <- FALSE
@@ -115,7 +119,7 @@ save(p_sites, file=file.path(pkg_dir, "data", "p_sites.rda"))
 ```
 
 ### Profiling on CDS
-Use `GenomicAlignments::summarizeOverlaps()` to count p-sites on CDS and save as `DESeqDataSet` with size factor estimated by _DESeq2_. This size factor will be used to normalized the counts on other transcript-based genomic features later.
+Use `GenomicAlignments::summarizeOverlaps()` to count p-sites on CDS and save as `DESeqDataSet` with size factor estimated by _DESeq2_. This size factor will also be used to normalize the counts on other transcript-based genomic features.
 
 ```{r profile-CDS, eval=FALSE}
 # profiling

@@ -1,2 +1,4 @@
+.DS_Store
 gitbook/gitbook.rds
-docs/04-mRNA-and-differential-analysis.md
+docs/*.md
+gitbook/.DS_Store

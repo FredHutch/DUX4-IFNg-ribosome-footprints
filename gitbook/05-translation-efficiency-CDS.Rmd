@@ -41,6 +41,7 @@ library(corrr)
 library(plyranges)
 library(wesanderson)
 library(goseq)
+library(org.Hs.eg.db)
 library(hg38.HomoSapiens.Gencode.v35)
 data(gene.anno)
 txdb <- hg38.HomoSapiens.Gencode.v35
@@ -154,4 +155,16 @@ ggplot(res, aes(x=rna_lfc, y=ribo_lfc)) +
   labs(x=bquote(~"RNA-seq:" ~log[2]~"(DOX_pulse_IFNg / IFNg)"), 
        y=bquote(~"Ribo-seq:" ~log[2]~"(DOX_pulse_IFNg / IFNg)"), 
        title="Ribo-seq vs. RNA-seq (exclude DUX4-induced)", shape="IFNg-induced") 
+```
+
+## GO term analysis
+```{r goseq-S6}
+# take down-regulated translation efficiency and use goseq to find the
+# affected GO terms. Display the top 10.
+interested <- tidy_S6_v2 %>% dplyr::filter(status=="down")
+universal <- tidy_S6_v2 %>% pull(ensembl) %>% str_replace("\\..*", "")
+selected <- interested %>% pull(ensembl) %>% str_replace("\\..*", "")
+enriched_go <- .do_goseq(universal=universal, selected_gene=selected,  p_value=0.3,
+                         return.DEInCat=FALSE, dds=dds_S6)
+knitr::kable(enriched_go[1:10, ], caption="Top 10 enriched GO terms determined by down-regulated translation efficiency induced by DUX4." )
 ```
