@@ -2,13 +2,14 @@
 ```{r setup-4, include=FALSE}
 knitr::opts_chunk$set(eval = FALSE)
 ```
-In this chapter, we performed mRNA profiling on different genomic features and identified DUX4 and $IFN_{\gamma}$ induced genes. 
+In this chapter, we performed mRNA profiling on different genomic features and identified DUX4 and $IFN_{\gamma}$ induced genes. Bioconductor packages, including _GenomicAlignments_ and _DESeq_ along with custom build annotation TxDB package `hg38.HomoSapiens.Gencode.v35`, were used for gene counting, differential analysis, and determining translation efficiency and the DUX4- and $IFN_{\gamma}$-induced genes.
 
 ## mRNA profiling
-Similar to the RPFs profiling, we used `GenomicAlignments::summarizedOverlaps()` to perform gene counting on gene-based features—CDS and exons—and transcript-based features including 5' UTR, around translation start site ([-13, 13]), first exon, and 3' TUR.
+Similar to the RPFs profiling, we used `GenomicAlignments::summarizedOverlaps()` to perform gene counting on gene-based features, CDS and exons, and transcript-based features, including 5' UTR, around translation start site ([-13, 13]), first exon, and 3' TUR.
 
 Note that this mRNA profiling involved BAM files and therefore the results (`DESeqDataSeq` instance) of the code here were not generated on the fly. 
 
+## libraries, parameters, and tools
 Code chunk belows load libraries and defines sample info as meta data. 
 ```{r loading-library-for-mRNA-profiling}
 library(hg38.HomoSapiens.Gencode.v35)
@@ -28,7 +29,8 @@ pkg_dir <- "/fh/fast/tapscott_s/CompBio/Ribo-seq/hg38.DUX4.IFN.ribofootprint.2"
 rna_bam_dir <- "/fh/fast/tapscott_s/CompBio/dchamm/DCH_Paired_RiboSeq_RNA-Seq_BAM_files"
 
 sample_info <- data.frame(
-  bam_files = bam_files <- list.files(rna_bam_dir, pattern=".bam$", full.names=TRUE)) %>%
+  bam_files = bam_files <- list.files(rna_bam_dir, pattern=".bam$", 
+                                      full.names=TRUE)) %>%
     dplyr::mutate(sample_name = str_replace(basename(bam_files),
                                             ".bam", ""),
                   treatment = str_replace(str_sub(sample_name,
@@ -60,7 +62,9 @@ rownames(sample_info) <- sample_info$sample_name
 }
 ```
 
-Code chunks below profiles mRNA in different genomic features.
+## Gene-based genomc features
+
+Code chunks below profiles mRNA in gene-based genomic features by CDS and by exons:
 ```{r makeEset-CDS}
 # (a) tx-based features
 load(file.path(pkg_dir, "data", "tx_based_features.rda")) # 5'UTR/TSS/1stExon/3'UTR
@@ -108,7 +112,9 @@ save(rse_exons_mRNA, file=file.path(pkg_dir, "data",
                                     "rse_exons_mRNA.rda"))  
 ```
 
-Profiling first exons by transcripts:
+## Profiling transcroptome for transcript-based genomic features:
+
+Code chuck below profiling for the fist exon for each transcripts:
 ```{r makeRSE-1st-exons}
 #
 # first exon by transcripts (tx) - inherit sizeFactor from rse_cds_mRNA; must turn off inter.feature
@@ -118,14 +124,16 @@ rse_1st_exon_by_tx_mRNA <-
   summarizeOverlaps(features = first_exon, 
                     reads=BamFileList(sample_info$bam_files),
                     mode = "IntersectionStrict",
-                    inter.feature = FALSE, ignore.strand=TRUE, BPPARAM=bp_param)
+                    inter.feature = FALSE, ignore.strand=TRUE, 
+                    BPPARAM=bp_param)
 colnames(rse_1st_exon_by_tx_mRNA) <- sample_info$sample_name                                  
 colData(rse_1st_exon_by_tx_mRNA) <- as(sample_info, "DataFrame")
 rse_1st_exon_by_tx_mRNA <- .get_row_data_txname(rse_1st_exon_by_tx_mRNA, txdb)
-save(rse_1st_exon_by_tx_mRNA, file=file.path(pkg_dir, "data", "rse_1st_exon_by_tx_mRNA.rda"))
+save(rse_1st_exon_by_tx_mRNA, file=file.path(pkg_dir, "data",
+                                             "rse_1st_exon_by_tx_mRNA.rda"))
 ```
 
-Profiling round translation start sites [-13, 13]:
+Profiling footprint 13 nts up/down-stream from the the translation start sites [-13, 13]:
 ```{r makeRSE-TSS}
 #
 # around TSS
@@ -173,12 +181,12 @@ save(rse_3UTR_by_tx_mRNA, file=file.path(pkg_dir, "data",
                                          "rse_3UTR_by_tx_mRNA.rda"))
 ```
 
-## Define DUX4 and IFN-gamma induced genes
-We used the mRNA profiling on CDS and applied _DESeq2_ to determine the DUX4 and $IFN_{\gamma}$ induced genes with thresholds adjusted $p$-value $< 0.05$ and $logFC > 1$. 
+## Define DUX4 and IFN-gamma induced genes {#dux4-induced-genes}
+We used the mRNA profiling on CDS and applied _DESeq2_ to determine the DUX4 and $IFN_{\gamma}$ induced genes by comparing $INF_{\gamma}$ and DUX-pulse treatments to untraated, respectively, with thresholds adjusted $p$-value $< 0.05$ and $logFC > 1$.
 
 ```{r S1-DUX4-vs-untreated}
 #
-# (1) DUX4-induced: DOX_pulse vs. untreated
+# (1) S1 - DUX4-induced: DOX_pulse vs. untreated
 #
 rna_S1 <- rse_cds_mRNA[, rse_cds_mRNA$treatment %in% c("untreated", "DOX_pulse")]
 rna_S1 <- rna_S1[rowSums(assays(rna_S1)[["counts"]]) >= 12] 
@@ -187,7 +195,7 @@ dds_rna_S1 <- DESeqDataSet(rna_S1, design = ~ treatment)
 dds_rna_S1 <- estimateSizeFactors(dds_rna_S1)
 dds_rna_S1 <- DESeq(dds_rna_S1)
 
-# DUX4_induced with lfc > 1 and padj < 0.05
+# thresholds: lfc > 1 and padj < 0.05
 DUX4_induced_v2 <- results(dds_rna_S1, alpha=0.05, tidy=TRUE) %>%
   dplyr::filter(padj < 0.05, log2FoldChange > 1 ) %>%
   dplyr::arrange(padj) %>%

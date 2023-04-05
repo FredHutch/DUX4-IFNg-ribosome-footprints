@@ -3,6 +3,9 @@ fig:distant-to-start-codon
 fig:reading-frame-tss
 fig:reading-frame-freq-transcripts
 fig:meta-gene-coverage
+eq:te
+fig:tidy-and-viz-S6-results
+tab:goseq-S6
 about
 samples-and-treatments
 softwear-requirement
@@ -26,4 +29,12 @@ profiling-on-cds
 profiling-on-other-genomic-features
 mRNA
 mrna-profiling
-define-dux4-and-ifn-gamma-induced-genes
+libraries-parameters-and-tools
+gene-based-genomc-features
+profiling-transcroptome-for-transcript-based-genomic-features
+dux4-induced-genes
+translation-efficiency-CDS
+steps
+load-libraries-and-define-parameters
+dux4ifn_gamma-vs.-ifn_gamma-in-cds
+go-term-analysis
