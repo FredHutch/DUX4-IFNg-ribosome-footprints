@@ -6,20 +6,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Chapter 1 About | DUX4 ribosome footprints profiling and translation efficiency</title>
 <meta name="author" content="Chao-Jen Wong">
-<meta name="description" content="This is a book providing detailed descriptions and R code to serve the purposed of transparency and reproducibility of our ribosome footprints analysis from the publication: DUX4 orchestrates translational reprograming by broadly suppressing translation.">
-<meta name="generator" content="bookdown 0.31 with bs4_book()">
+<meta name="description" content="Detailed descriptions and R code to serve the purposes of transparency and reproducibility in our ribosome footprints analysis for the publication: DUX4 orchestrates translational reprograming by broadly suppressing translation">
+<meta name="generator" content="bookdown 0.32 with bs4_book()">
 <meta property="og:title" content="Chapter 1 About | DUX4 ribosome footprints profiling and translation efficiency">
 <meta property="og:type" content="book">
 <meta property="og:url" content="https://FredHutch.github.io/DUX4-IFNg-ribosome-footprints">
-<meta property="og:description" content="This is a book providing detailed descriptions and R code to serve the purposed of transparency and reproducibility of our ribosome footprints analysis from the publication: DUX4 orchestrates translational reprograming by broadly suppressing translation.">
+<meta property="og:description" content="Detailed descriptions and R code to serve the purposes of transparency and reproducibility in our ribosome footprints analysis for the publication: DUX4 orchestrates translational reprograming by broadly suppressing translation">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Chapter 1 About | DUX4 ribosome footprints profiling and translation efficiency">
-<meta name="twitter:description" content="This is a book providing detailed descriptions and R code to serve the purposed of transparency and reproducibility of our ribosome footprints analysis from the publication: DUX4 orchestrates translational reprograming by broadly suppressing translation.">
+<meta name="twitter:description" content="Detailed descriptions and R code to serve the purposes of transparency and reproducibility in our ribosome footprints analysis for the publication: DUX4 orchestrates translational reprograming by broadly suppressing translation">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
-<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Sen-0.4.3/font.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Sen-0.4.5/font.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=DM%20Mono&amp;display=swap" rel="stylesheet">
-<link href="libs/Bitter-0.4.3/font.css" rel="stylesheet">
+<link href="libs/Bitter-0.4.5/font.css" rel="stylesheet">
 <script src="libs/bs3compat-0.4.2/transition.js"></script><script src="libs/bs3compat-0.4.2/tabs.js"></script><script src="libs/bs3compat-0.4.2/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
 <script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
     
@@ -53,6 +53,7 @@
 <li><a class="" href="profiling.html"><span class="header-section-number">4</span> P-sites profiling on genomic features</a></li>
 <li><a class="" href="mRNA.html"><span class="header-section-number">5</span> mRNA profiling and DUX4/IFNg induced genes</a></li>
 <li><a class="" href="translation-efficiency-CDS.html"><span class="header-section-number">6</span> Translation efficiency changes in CDS</a></li>
+<li><a class="" href="adjMEF.html"><span class="header-section-number">7</span> Free energy</a></li>
 <li><a class="" href="references.html">References</a></li>
 </ul>
 
@@ -65,12 +66,12 @@
 <h1>
 <span class="header-section-number">1</span> About<a class="anchor" aria-label="anchor" href="#about"><i class="fas fa-link"></i></a>
 </h1>
-<p>This book provides detailed descriptions and R code serve the transparency and reproducibility of ribosome footprin profiling and related analysis for our publication: <em>DUX4 orchestrates translational reprogramming</em>.</p>
+<p>This book provides detailed descriptions and R code intended to facilitate transparency and reproducibility in our ribosome footprint profiling and related analysis for our publication: <em>DUX4 orchestrates translational reprograming by broadly suppressing translation</em>.</p>
 <div id="samples-and-treatments" class="section level2" number="1.1">
 <h2>
 <span class="header-section-number">1.1</span> Samples and treatments<a class="anchor" aria-label="anchor" href="#samples-and-treatments"><i class="fas fa-link"></i></a>
 </h2>
-<p>The processed data sets of the RNA-seq and Ribo-seq data supporting the manuscript reside at the <a href="https://github.com/FredHutch/DUX4-IFNg-ribosome-footprints/data">data</a> directory. Both RNA-seq and Ribo-seq data sets are transformed into <code>DESeq2DataSet</code> instances and the samples consist of triplicates of untreated, IFN-gamma, DUX4, and DUX4+INF-gamma treatments. Together, they are used find insights into the translational reprogramming of DUX4.</p>
+<p>A total of 12 samples were prepared for RNA-seq and Ribo-seq, seperately, and each comprising four distinct treatments: untreated, DUX4-pulse, IFN-gamma, and DUX4-pulse+INF-gamma, with triplicates for each treatment. The processed data and profilings reside at the repository’s <a href="https://github.com/FredHutch/DUX4-IFNg-ribosome-footprints/data">data</a> directory.</p>
 </div>
 <div id="softwear-requirement" class="section level2" number="1.2">
 <h2>
@@ -85,32 +86,110 @@
 <h2>
 <span class="header-section-number">1.3</span> data<a class="anchor" aria-label="anchor" href="#data"><i class="fas fa-link"></i></a>
 </h2>
-<p>The <a href="https://github.com/FredHutch/DUX4-IFNg-ribosome-footprints/data">data</a> directory in this repo includes the processed data sets used for our analyses:</p>
+<p>The <a href="https://github.com/FredHutch/DUX4-IFNg-ribosome-footprints/data">data</a> directory in this repository contains the processed data sets used for our analyses:</p>
+<p><strong>ribosome footprints</strong></p>
 <ul>
-<li>dds_.rda: DESeqDataSet instances containing p-site counts on different genomic features inclduing 5’ UTR and 3’ UTR<br>
+<li>dds_cds_by_gene.rda: a <em>DESeqDataSet</em> instance containing p-site profiling on CDS regions and metadata, including size factor and treatments</li>
+<li>rse_[5UTR_1stExon|3UTR|TSS|1st_exon]_by_tx.rda: <em>RangedSummarisedExperiment</em> instances containing the metadata and transcript-based p-site profiling on different genomic features, including 5’UTR+1st exons, 13 nt up/downstream from transcription sites, 1st exons, and 3’ UTR regions. Note that the size factors are inherited from CDS-based profiling instance <code>dds_cds_by_data</code>
 </li>
-<li>dds_cds_by_gene.rda: a list of <em>DESeqDataSet</em> instances containing p-site counts on CDS regions and metadata (size factor and treatment)</li>
 </ul>
-<p>mRNA profiling datasets:</p>
+<p><strong>mRNA profiling</strong>:</p>
 <ul>
 <li>
 <code>rse_cds_mRNA.rda</code>: a list of <em>RangedSummarixedExperiment</em> instances containing mRNA counts (mRNA) for gene-based CDS along with the <code>sizeFactors</code> and metadata.<br>
 </li>
 <li>
-<code>rse_[TSS/5UTR/3UTR/1stEXON]_by_tx_mRNA.rda</code>: lists of <em>RangedSummarixedExperiment</em> instances containing mRNA counts (mRNA) for transcript-based genomic features along with <code>sizeFactors</code> and metadata. Noth the <code>sizeFactors</code> are inherited from the CDS-based profiling instance <code>rse_cds_mRNA</code>.</li>
+<code>rse_[5UTR_1stExon|3UTR|TSS|1st_exon]_by_tx_mRNA.rda</code>: lists of <em>RangedSummarisedExperiment</em> instances containing transcript-based mRNA counts (mRNA) for different genomic features, including 5’UTR+1st exons, 13 nt up/downstream from transcription sites, 1st exons, and 3’ UTR regions. Note that through out the analyses for this project, the <code>sizeFactors</code> of these transcript-based mRNA counts are inherited from the CDS-based profiling instance <code>rse_cds_mRNA</code>
+</li>
+</ul>
+<p><strong>MISC</strong>:</p>
+<ul>
+<li>
+<code>DUX4_induced_v2.rda</code>: DUX4 induced genes</li>
+<li>
+<code>IFNg_induced_v2.rda</code>: IFN_gamma induced genes</li>
 </ul>
 </div>
-<div id="txdb-annotation-package-for-gencode-v35" class="section level2" number="1.4">
+<div id="annotation" class="section level2" number="1.4">
 <h2>
-<span class="header-section-number">1.4</span> TxDb annotation package for gencode v35<a class="anchor" aria-label="anchor" href="#txdb-annotation-package-for-gencode-v35"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.4</span> Annotation<a class="anchor" aria-label="anchor" href="#annotation"><i class="fas fa-link"></i></a>
 </h2>
-<p>Show how we make the annotation TxDb package here</p>
+<p>We collected the annotation from Gencode version 35 and made a Bioconductor-based TxDb package.</p>
+<div id="make-txdb-annotation-package-for-gencode-v35" class="section level3" number="1.4.1">
+<h3>
+<span class="header-section-number">1.4.1</span> Make TxDb annotation package for gencode v35<a class="anchor" aria-label="anchor" href="#make-txdb-annotation-package-for-gencode-v35"><i class="fas fa-link"></i></a>
+</h3>
+<p>The code chunk below demonstrates how to create a customized TxDB package form GTF file, specifically called <code>hg38.HomoSapiens.Gencode.v35</code>, tailored to our bioinformatics analysis.</p>
+<p>The steps include:</p>
+<ol style="list-style-type: decimal">
+<li>Transform the downloaded Gencode v35 GTF file into a <code>GRange</code> instance</li>
+<li>Convert the <code>GRange</code> instance into a TxDB package</li>
+<li>(Optional) Include the gene annotation (gene_name, gene_type, gene_ID, and gene_type) as a <code>DataFrame</code> instance in the <code>data</code> folder in the package. This step not necessary if building an Ensembl DB package (<code>EnsDb</code>)</li>
+</ol>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">rtracklayer</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/GenomicFeatures">GenomicFeatures</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">## Define the destination and package name of your TxDB package</span></span>
+<span><span class="va">pkg_name</span> <span class="op">&lt;-</span> <span class="st">"hg38.HomoSapiens.Gencode.v35"</span></span>
+<span><span class="va">dest_dir</span> <span class="op">&lt;-</span> <span class="st">"/fh/fast/tapscott_s/CompBio/hg38"</span></span>
+<span></span>
+<span><span class="co">## Where is my GTF file</span></span>
+<span><span class="va">gtf_file</span> <span class="op">&lt;-</span> <span class="st">"/fh/fast/tapscott_s/CompBio/genome_reference/GRCh38/Annotation/gencode.v35.annotation.gtf"</span></span>
+<span></span>
+<span><span class="co">## Import the GTF file into a GRange instance</span></span>
+<span><span class="va">gencode</span> <span class="op">&lt;-</span> <span class="fu">rtracklayer</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rtracklayer/man/GFFFile-class.html">import.gff</a></span><span class="op">(</span><span class="va">gtf_file</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">## Define metadata: version, source, and etc.</span></span>
+<span><span class="va">organism</span> <span class="op">&lt;-</span> <span class="st">"human"</span></span>
+<span><span class="va">release</span> <span class="op">&lt;-</span> <span class="st">"v35"</span></span>
+<span><span class="va">dataSource</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"ftp://ftp.sanger.ac.uk/pub/gencode/Gencode_"</span>,</span>
+<span>                     <span class="va">organism</span>, <span class="st">"/"</span>, <span class="va">release</span><span class="op">)</span></span>
+<span><span class="va">metadata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
+<span>  name<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Organism"</span>, <span class="st">"Resource URL"</span>, <span class="st">"Resource GTF file"</span>,</span>
+<span>         <span class="st">"Taxonomy ID"</span>, <span class="st">"miRBase build ID"</span>, <span class="st">"Data source"</span><span class="op">)</span>,</span>
+<span>  value<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Homo sapiens"</span>, <span class="va">dataSource</span>, <span class="va">gtf_file</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="va">dataSource</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">## Prepare the metadata</span></span>
+<span><span class="va">metadata</span> <span class="op">&lt;-</span> <span class="fu">GenomicFeatures</span><span class="fu">:::</span><span class="fu">.prepareGFFMetadata</span><span class="op">(</span><span class="va">gtf_file</span>, <span class="va">dataSource</span>,</span>
+<span>                                                  organism<span class="op">=</span><span class="st">"Homo sapiens"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">## Combine the GRange instance and metadata into a TxDB instance</span></span>
+<span><span class="va">txdb</span> <span class="op">&lt;-</span> <span class="fu">GenomicFeatures</span><span class="fu">:::</span><span class="fu"><a href="https://rdrr.io/pkg/GenomicFeatures/man/makeTxDbFromGRanges.html">makeTxDbFromGRanges</a></span><span class="op">(</span>gr<span class="op">=</span><span class="va">gencode</span>,</span>
+<span>                                              metadata<span class="op">=</span><span class="va">metadata</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">## Build a TxDb package</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/GenomicFeatures/man/makeTxDbPackage.html">makeTxDbPackage</a></span><span class="op">(</span><span class="va">txdb</span>, version<span class="op">=</span><span class="st">"4.2.2"</span>, author<span class="op">=</span><span class="st">"Chao-Jen Wong"</span>,</span>
+<span>                pkgname<span class="op">=</span><span class="va">pkg_name</span>, destDir<span class="op">=</span><span class="va">dest_dir</span>, license<span class="op">=</span><span class="st">"Artistic-2.0"</span>,</span>
+<span>                provider<span class="op">=</span><span class="st">"Gencode"</span>, providerVersion<span class="op">=</span><span class="va">release</span>,</span>
+<span>                maintainer<span class="op">=</span><span class="st">"Chao-Jen Wong &lt;cwon2@fredhutch.org&gt;"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="build-ensdb-package-using-annotationhub" class="section level3" number="1.4.2">
+<h3>
+<span class="header-section-number">1.4.2</span> Build EnsDb package using <code>AnnotationHub</code><a class="anchor" aria-label="anchor" href="#build-ensdb-package-using-annotationhub"><i class="fas fa-link"></i></a>
+</h3>
+<p>In retrospect, I would use <code><a href="https://rdrr.io/pkg/AnnotationHub/man/AnnotationHub-class.html">AnnotationHub()</a></code> and <code>GenomicFeatures::makeEnsembldbPackage()</code> to make an <code>EnsDB</code> package instead of <code>TxDB</code> because <code>EnsDB</code> has slots/functions to retrieve the gene information. Below is an example:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#'</span></span>
+<span><span class="co">#' EnsDb.Hsapiens.v92: </span></span>
+<span><span class="co">#'</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">AnnotationHub</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/GenomicFeatures">GenomicFeatures</a></span><span class="op">)</span></span>
+<span><span class="va">ah</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/AnnotationHub/man/AnnotationHub-class.html">AnnotationHub</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/AnnotationHub/man/AnnotationHub-class.html">query</a></span><span class="op">(</span><span class="va">ah</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"hsapiens"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">edb</span> <span class="op">&lt;-</span> <span class="va">ah</span><span class="op">[[</span><span class="st">"AH60977"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqlevelsStyle.html">seqlevelsStyle</a></span><span class="op">(</span><span class="va">edb</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"NCBI"</span></span>
+<span><span class="fu">makeEnsembldbPackage</span><span class="op">(</span>ensdb<span class="op">=</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/dbconn.html">dbfile</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/dbconn.html">dbconn</a></span><span class="op">(</span><span class="va">edb</span><span class="op">)</span><span class="op">)</span>, version<span class="op">=</span><span class="st">"1.0.0"</span>,</span>
+<span>                     maintainer<span class="op">=</span><span class="st">"Chao-Jen Wong &lt;cwon2@fredhutch.org&gt;"</span>,</span>
+<span>                     author<span class="op">=</span><span class="st">"Chao-Jen Wong"</span>,</span>
+<span>                     destDir<span class="op">=</span><span class="st">"/fh/fast//tapscott_s/CompBio/hg38"</span><span class="op">)</span></span></code></pre></div>
+</div>
 </div>
 <div id="additional-scripts" class="section level2" number="1.5">
 <h2>
 <span class="header-section-number">1.5</span> Additional scripts<a class="anchor" aria-label="anchor" href="#additional-scripts"><i class="fas fa-link"></i></a>
 </h2>
-<p>The <a href="https://github.com/FredHutch/DUX4-IFNg-ribosome-footprints/scripts">scripts</a> directory contains the R code and shell scripts performing the bioinformatics analysis for the manuscripts.</p>
+<p>The <a href="https://github.com/FredHutch/DUX4-IFNg-ribosome-footprints/scripts">scripts</a> directory contains the R code and shell scripts performing preprocessing and bioinformatics analysis for the manuscripts.</p>
 
 </div>
 </div>
@@ -124,7 +203,12 @@
 <li><a class="nav-link" href="#samples-and-treatments"><span class="header-section-number">1.1</span> Samples and treatments</a></li>
 <li><a class="nav-link" href="#softwear-requirement"><span class="header-section-number">1.2</span> Softwear requirement</a></li>
 <li><a class="nav-link" href="#data"><span class="header-section-number">1.3</span> data</a></li>
-<li><a class="nav-link" href="#txdb-annotation-package-for-gencode-v35"><span class="header-section-number">1.4</span> TxDb annotation package for gencode v35</a></li>
+<li>
+<a class="nav-link" href="#annotation"><span class="header-section-number">1.4</span> Annotation</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#make-txdb-annotation-package-for-gencode-v35"><span class="header-section-number">1.4.1</span> Make TxDb annotation package for gencode v35</a></li>
+<li><a class="nav-link" href="#build-ensdb-package-using-annotationhub"><span class="header-section-number">1.4.2</span> Build EnsDb package using AnnotationHub</a></li>
+</ul>
+</li>
 <li><a class="nav-link" href="#additional-scripts"><span class="header-section-number">1.5</span> Additional scripts</a></li>
 </ul>
 
@@ -143,7 +227,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>DUX4 ribosome footprints profiling and translation efficiency</strong>" was written by Chao-Jen Wong. It was last built on 2022-12-21.</p>
+    <p>"<strong>DUX4 ribosome footprints profiling and translation efficiency</strong>" was written by Chao-Jen Wong. It was last built on 2023-04-07.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
