@@ -1,44 +1,118 @@
 --- 
 title: "DUX4 ribosome footprints profiling and translation efficiency"
 author: "Chao-Jen Wong"
-date: "2022-12-21"
+date: "2023-04-07"
 site: bookdown::bookdown_site
 documentclass: book
 bibliography: [book.bib, packages.bib]
 url: https://FredHutch.github.io/DUX4-IFNg-ribosome-footprints
 #cover-image: images/cover.png
 description: |
-  This is a book providing detailed descriptions and R code to serve the purposed of transparency and reproducibility of our ribosome footprints analysis from the publication: DUX4 orchestrates translational reprograming by broadly suppressing translation.
+  Detailed descriptions and R code to serve the purposes of transparency and reproducibility in our ribosome footprints analysis for the publication: DUX4 orchestrates translational reprograming by broadly suppressing translation
 biblio-style: apalike
 csl: chicago-fullnote-bibliography.csl
 ---
 
 # About
 
-This book provides detailed descriptions and R code serve the transparency and reproducibility of ribosome footprin profiling and related analysis for our publication: _DUX4 orchestrates translational reprogramming_.
+This book provides detailed descriptions and R code intended to facilitate  transparency and reproducibility in our ribosome footprint profiling and related analysis for our publication: _DUX4 orchestrates translational reprograming by broadly suppressing translation_.
 
 ## Samples and treatments
-The processed data sets of the RNA-seq and Ribo-seq data supporting the manuscript reside at the [data](https://github.com/FredHutch/DUX4-IFNg-ribosome-footprints/data) directory. Both RNA-seq and Ribo-seq data sets are transformed into `DESeq2DataSet` instances and the samples consist of triplicates of untreated, IFN-gamma, DUX4, and DUX4+INF-gamma treatments. Together, they are used find insights into the translational reprogramming of DUX4. 
+A total of 12 samples were prepared for RNA-seq and Ribo-seq, seperately, and each comprising four distinct treatments: untreated, DUX4-pulse, IFN-gamma, and DUX4-pulse+INF-gamma, with triplicates for each treatment. The processed data and profilings reside at the repository's [data](https://github.com/FredHutch/DUX4-IFNg-ribosome-footprints/data) directory. 
+
 
 ## Softwear requirement
 * R (>=4.0.3): the tidyverse project, knitr, bookdown, rmarkdown
 * Bioconductor: DESeq2, goseq, GenomicAlignment, GenomicFeature, ribosomeProfilingQC, and etc.
 
 ## data
-The [data](https://github.com/FredHutch/DUX4-IFNg-ribosome-footprints/data) directory in this repo includes the processed data sets used for our analyses:
+The [data](https://github.com/FredHutch/DUX4-IFNg-ribosome-footprints/data) directory in this repository contains the processed data sets used for our analyses:
 
-* dds_.rda: DESeqDataSet instances containing p-site counts on different genomic features inclduing 5' UTR and 3' UTR      
-* dds_cds_by_gene.rda: a list of _DESeqDataSet_ instances containing p-site counts on CDS regions and metadata (size factor and treatment) 
+__ribosome footprints__
 
-mRNA profiling datasets:  
+* dds_cds_by_gene.rda: a _DESeqDataSet_ instance containing p-site profiling on CDS regions and metadata, including size factor and treatments
+* rse_[5UTR_1stExon|3UTR|TSS|1st_exon]_by_tx.rda: _RangedSummarisedExperiment_ instances containing the metadata and transcript-based p-site profiling on different genomic features, including 5'UTR+1st exons, 13 nt up/downstream from transcription sites, 1st exons, and 3' UTR regions. Note that the size factors are inherited from CDS-based profiling instance `dds_cds_by_data`
+
+__mRNA profiling__:  
 
 * `rse_cds_mRNA.rda`: a list of _RangedSummarixedExperiment_ instances containing mRNA counts (mRNA) for gene-based CDS along with the `sizeFactors` and metadata.  
-* `rse_[TSS/5UTR/3UTR/1stEXON]_by_tx_mRNA.rda`: lists of _RangedSummarixedExperiment_ instances containing mRNA counts (mRNA) for transcript-based genomic features along with `sizeFactors` and metadata. Noth the `sizeFactors` are inherited from the CDS-based profiling instance `rse_cds_mRNA`. 
+* `rse_[5UTR_1stExon|3UTR|TSS|1st_exon]_by_tx_mRNA.rda`: lists of _RangedSummarisedExperiment_ instances containing transcript-based mRNA counts (mRNA) for different genomic features, including 5'UTR+1st exons, 13 nt up/downstream from transcription sites, 1st exons, and 3' UTR regions. Note that through out the analyses for this project, the `sizeFactors` of these transcript-based mRNA counts are inherited from the CDS-based profiling instance `rse_cds_mRNA`
+
+__MISC__:
+
+* `DUX4_induced_v2.rda`: DUX4 induced genes
+* `IFNg_induced_v2.rda`: IFN_gamma induced genes
+
+## Annotation
+We collected the annotation from Gencode version 35 and made a Bioconductor-based TxDb package. 
+
+### Make TxDb annotation package for gencode v35
+The code chunk below demonstrates how to create a customized TxDB package form GTF file, specifically called `hg38.HomoSapiens.Gencode.v35`, tailored to our bioinformatics analysis.
+
+The steps include:
+
+1. Transform the downloaded Gencode v35 GTF file into a `GRange` instance
+2. Convert the `GRange` instance into a TxDB package
+3. (Optional) Include the gene annotation (gene_name, gene_type, gene_ID, and gene_type) as a `DataFrame` instance in the `data` folder in the package. This step not necessary if building an Ensembl DB package (`EnsDb`)
 
 
-## TxDb annotation package for gencode v35
+```r
+library(rtracklayer)
+library(GenomicFeatures)
 
-Show how we make the annotation TxDb package here
+## Define the destination and package name of your TxDB package
+pkg_name <- "hg38.HomoSapiens.Gencode.v35"
+dest_dir <- "/fh/fast/tapscott_s/CompBio/hg38"
+
+## Where is my GTF file
+gtf_file <- "/fh/fast/tapscott_s/CompBio/genome_reference/GRCh38/Annotation/gencode.v35.annotation.gtf"
+
+## Import the GTF file into a GRange instance
+gencode <- rtracklayer::import.gff(gtf_file)
+
+## Define metadata: version, source, and etc.
+organism <- "human"
+release <- "v35"
+dataSource <- paste0("ftp://ftp.sanger.ac.uk/pub/gencode/Gencode_",
+                     organism, "/", release)
+metadata <- data.frame(
+  name=c("Organism", "Resource URL", "Resource GTF file",
+         "Taxonomy ID", "miRBase build ID", "Data source"),
+  value=c("Homo sapiens", dataSource, gtf_file, NA, NA, dataSource))
+
+## Prepare the metadata
+metadata <- GenomicFeatures:::.prepareGFFMetadata(gtf_file, dataSource,
+                                                  organism="Homo sapiens")
+
+## Combine the GRange instance and metadata into a TxDB instance
+txdb <- GenomicFeatures:::makeTxDbFromGRanges(gr=gencode,
+                                              metadata=metadata)
+
+## Build a TxDb package
+makeTxDbPackage(txdb, version="4.2.2", author="Chao-Jen Wong",
+                pkgname=pkg_name, destDir=dest_dir, license="Artistic-2.0",
+                provider="Gencode", providerVersion=release,
+                maintainer="Chao-Jen Wong <cwon2@fredhutch.org>")
+```
+
+### Build EnsDb package using `AnnotationHub`
+In retrospect, I would use `AnnotationHub()` and `GenomicFeatures::makeEnsembldbPackage()` to make an `EnsDB` package instead of `TxDB` because `EnsDB` has slots/functions to retrieve the gene information. Below is an example: 
+
+```r
+#'
+#' EnsDb.Hsapiens.v92: 
+#'
+library(AnnotationHub)
+library(GenomicFeatures)
+ah <- AnnotationHub()
+query(ah, c("hsapiens"))
+edb <- ah[["AH60977"]]
+seqlevelsStyle(edb) <- "NCBI"
+makeEnsembldbPackage(ensdb=dbfile(dbconn(edb)), version="1.0.0",
+                     maintainer="Chao-Jen Wong <cwon2@fredhutch.org>",
+                     author="Chao-Jen Wong",
+                     destDir="/fh/fast//tapscott_s/CompBio/hg38")
+```
 
 ## Additional scripts
-The [scripts](https://github.com/FredHutch/DUX4-IFNg-ribosome-footprints/scripts) directory contains the R code and shell scripts performing the bioinformatics analysis for the manuscripts.
+The [scripts](https://github.com/FredHutch/DUX4-IFNg-ribosome-footprints/scripts) directory contains the R code and shell scripts performing preprocessing and bioinformatics analysis for the manuscripts.
