@@ -1,12 +1,17 @@
-# Free energy {#adjMEF}
+# Free energy of 5 prime UTR  {#adjMEF}
 
-We have five collections of 5'UTR and use the `ShortRead`, `BioStrings` and `BSgenome.Hsapiens.UCSC.hg38` packages to get the squences.
-
-1. All annotated 5' UTR (79,176): transcript-based and unique 5' UTR model from Gencode v35
-2. DUX4 targets: 88 targets identified from Polysome-seq, and the 5'UTR include annotated and un-annotated identified by the `SESeq` packages; `DUX4-targets-polysome-84` how did I get this? Hint: `110-HDUX4-promoter.R` checked if the candidate has alternative splice events, alternative first exon (AFE) or alternative start site (AS). Some genes use alernative start site / first exon, but some dont'. `DUX4-targets-novel-and-annotated-5'UTR.xlsx`.
-3.
-4. Down-regulated translational efficiency by Ribo-seq (S6) in 5'UTR region: `TE down Ribo-seq`
-5. TE list from poly-seq: `TE dwon Poly-seq`, total 5,800 genes; high/sub
+To obtain the 5' UTR sequences and their corresponding free energy values, we utilized the `ShortRead`, `BioStrings`, and `BSgenome.Hsapiens.UCSC.hg38` Bioconductor packages, along with the `Vienna` software. The 5' UTR models were based on transcripts, but since there could be multiple isoforms with the same 5' UTR model, we ensured uniqueness by retaining only one instance of each.
 
 
-The plan to calculate the free energy of the five collections of 5'UTR is implemented by `09B-5UTR-structure.R`. 
+In this study, we calculated the free energy for five sets of 5' UTR features, as follows:
+
+1. __All annotated 5' UTR__: This set included transcript-based and unique 5' UTR models extracted from Gencode v3.5, comprising a total of 19,570 genes.
+2. __DUX4 direct targets__: We identified 84 DUX4 directed targets from Polysome-seq data, many of which had alternative promoters identified by [Whiddon 2017]((https://www.nature.com/articles/ng.3846)). These targets were listed in `../extdata/DUX4-targets-novel-and-annotated-5'UTR.xlsx`. We also checked for alternative splice events, alternative first exon (AFE), or alternative start site (AS) using `../scripts/110-HDUX4-promoter.R`.
+3. __TE down Ribo-seq__: Down-regulated translational efficiency by Ribo-seq (S6) in 5'UTR region: We identified 1,131 candidates with reduced translational efficiency in the 5'UTR region based on Ribo-seq data.
+
+4. __Poly-seq up-regulated__: We identified 239 non-DUX4-induced candidates that were up-regulated in DUX4-treatment in Poly-seq samples (High/High).
+
+5. __Poly-seq down-regulated__: We identified 5,800 candidates that were down-regulated in Poly-seq samples in the High vs. Sub comparison.
+
+
+The plan of calculating the  the five collections of 5'UTR is implemented by `09B-5UTR-structure.R`. 
