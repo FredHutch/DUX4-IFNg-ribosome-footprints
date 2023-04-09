@@ -53,7 +53,7 @@
 <li><a class="" href="profiling.html"><span class="header-section-number">4</span> P-sites profiling on genomic features</a></li>
 <li><a class="active" href="mRNA.html"><span class="header-section-number">5</span> mRNA profiling and DUX4/IFNg induced genes</a></li>
 <li><a class="" href="translation-efficiency-CDS.html"><span class="header-section-number">6</span> Translation efficiency changes in CDS</a></li>
-<li><a class="" href="adjMEF.html"><span class="header-section-number">7</span> Free energy</a></li>
+<li><a class="" href="adjMEF.html"><span class="header-section-number">7</span> 5’ UTR Free Energy Evaluation</a></li>
 <li><a class="" href="references.html">References</a></li>
 </ul>
 
@@ -79,7 +79,7 @@
 <span class="header-section-number">5.2</span> libraries, parameters, and tools<a class="anchor" aria-label="anchor" href="#libraries-parameters-and-tools"><i class="fas fa-link"></i></a>
 </h2>
 <p>Code chunk belows load libraries and defines sample info as meta data.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">hg38.HomoSapiens.Gencode.v35</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">gene.anno</span><span class="op">)</span></span>
 <span><span class="va">txdb</span> <span class="op">&lt;-</span> <span class="va">hg38.HomoSapiens.Gencode.v35</span></span>
@@ -134,7 +134,7 @@
 <span class="header-section-number">5.3</span> Gene-based genomc features<a class="anchor" aria-label="anchor" href="#gene-based-genomc-features"><i class="fas fa-link"></i></a>
 </h2>
 <p>Code chunks below profiles mRNA in gene-based genomic features by CDS and by exons:</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># (a) tx-based features</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/load.html">load</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">pkg_dir</span>, <span class="st">"data"</span>, <span class="st">"tx_based_features.rda"</span><span class="op">)</span><span class="op">)</span> <span class="co"># 5'UTR/TSS/1stExon/3'UTR</span></span>
 <span><span class="va">around_TSS</span> <span class="op">&lt;-</span> <span class="va">tx_based_features</span><span class="op">$</span><span class="va">around_TSS</span></span>
@@ -162,7 +162,7 @@
 <span><span class="fu"><a href="https://rdrr.io/r/base/save.html">save</a></span><span class="op">(</span><span class="va">rse_cds_mRNA</span>, file<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">pkg_dir</span>, <span class="st">"data"</span>,</span>
 <span>                                  <span class="st">"rse_cds_mRNA.rda"</span><span class="op">)</span><span class="op">)</span>  </span></code></pre></div>
 <p>Profiling exons by genes:</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#</span></span>
 <span><span class="co"># exons expression by genes</span></span>
 <span><span class="co">#</span></span>
@@ -183,7 +183,7 @@
 <span class="header-section-number">5.4</span> Profiling transcroptome for transcript-based genomic features:<a class="anchor" aria-label="anchor" href="#profiling-transcroptome-for-transcript-based-genomic-features"><i class="fas fa-link"></i></a>
 </h2>
 <p>Code chuck below profiling for the fist exon for each transcripts:</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#</span></span>
 <span><span class="co"># first exon by transcripts (tx) - inherit sizeFactor from rse_cds_mRNA; must turn off inter.feature</span></span>
 <span><span class="co">#</span></span>
@@ -200,7 +200,7 @@
 <span><span class="fu"><a href="https://rdrr.io/r/base/save.html">save</a></span><span class="op">(</span><span class="va">rse_1st_exon_by_tx_mRNA</span>, file<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">pkg_dir</span>, <span class="st">"data"</span>,</span>
 <span>                                             <span class="st">"rse_1st_exon_by_tx_mRNA.rda"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Profiling footprint 13 nts up/down-stream from the the translation start sites [-13, 13]:</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#</span></span>
 <span><span class="co"># around TSS</span></span>
 <span><span class="co">#</span></span>
@@ -215,7 +215,7 @@
 <span><span class="fu"><a href="https://rdrr.io/r/base/save.html">save</a></span><span class="op">(</span><span class="va">rse_TSS_by_tx_mRNA</span>, file<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">pkg_dir</span>, <span class="st">"data"</span>,</span>
 <span>                                        <span class="st">"rse_TSS_by_tx_mRNA.rda"</span><span class="op">)</span><span class="op">)</span>  </span></code></pre></div>
 <p>Profiling on 5’ UTR and 3’ UTR:</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#</span></span>
 <span><span class="co"># 5' UTR</span></span>
 <span><span class="co">#</span></span>
@@ -249,7 +249,7 @@
 <span class="header-section-number">5.5</span> Define DUX4 and IFN-gamma induced genes<a class="anchor" aria-label="anchor" href="#dux4-induced-genes"><i class="fas fa-link"></i></a>
 </h2>
 <p>We used the mRNA profiling on CDS and applied <em>DESeq2</em> to determine the DUX4 and <span class="math inline">\(IFN_{\gamma}\)</span> induced genes by comparing <span class="math inline">\(INF_{\gamma}\)</span> and DUX-pulse treatments to untraated, respectively, with thresholds adjusted <span class="math inline">\(p\)</span>-value <span class="math inline">\(&lt; 0.05\)</span> and <span class="math inline">\(logFC &gt; 1\)</span>.</p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#</span></span>
 <span><span class="co"># (1) S1 - DUX4-induced: DOX_pulse vs. untreated</span></span>
 <span><span class="co">#</span></span>
@@ -270,7 +270,7 @@
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>status<span class="op">=</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/if_else.html">if_else</a></span><span class="op">(</span><span class="va">log2FoldChange</span> <span class="op">&gt;</span> <span class="fl">1</span>, <span class="st">"up"</span>, <span class="st">"down"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span><span class="op">(</span><span class="va">cnt</span>, by<span class="op">=</span><span class="st">"ensembl"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/save.html">save</a></span><span class="op">(</span><span class="va">DUX4_induced_v2</span>, file<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">pkg_dir</span>, <span class="st">"data"</span>, <span class="st">"DUX4_induced_v2.rda"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#</span></span>
 <span><span class="co"># (2) S2 - IFNg induced: IFNg vs. untreated</span></span>
 <span><span class="co">#</span></span>
@@ -323,7 +323,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>DUX4 ribosome footprints profiling and translation efficiency</strong>" was written by Chao-Jen Wong. It was last built on 2023-04-07.</p>
+    <p>"<strong>DUX4 ribosome footprints profiling and translation efficiency</strong>" was written by Chao-Jen Wong. It was last built on 2023-04-08.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

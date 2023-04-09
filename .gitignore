@@ -2,3 +2,4 @@
 gitbook/gitbook.rds
 docs/*.md
 gitbook/.DS_Store
+gitbook/images/*.pdf

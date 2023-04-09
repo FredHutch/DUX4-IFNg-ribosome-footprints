@@ -53,7 +53,7 @@
 <li><a class="active" href="profiling.html"><span class="header-section-number">4</span> P-sites profiling on genomic features</a></li>
 <li><a class="" href="mRNA.html"><span class="header-section-number">5</span> mRNA profiling and DUX4/IFNg induced genes</a></li>
 <li><a class="" href="translation-efficiency-CDS.html"><span class="header-section-number">6</span> Translation efficiency changes in CDS</a></li>
-<li><a class="" href="adjMEF.html"><span class="header-section-number">7</span> Free energy</a></li>
+<li><a class="" href="adjMEF.html"><span class="header-section-number">7</span> 5’ UTR Free Energy Evaluation</a></li>
 <li><a class="" href="references.html">References</a></li>
 </ul>
 
@@ -68,7 +68,7 @@
 </h1>
 <p>In this chapter, we used <code>ribosomeProfilingQC::getPsiteCoordinates()</code> to get p-sites coordinates. Due to its large size, the <code>p-sites</code> dataset is not included in the repo. However, we do include the p-sites profiling on gene-based CDS and transcripts-based genomic features such as 5’ UTR, 13 nts up/downstream from translation start site, 1st exon, and 3’ UTR, saved as <code>DESeqDatSet</code> instances.</p>
 <p>Code chunk below loads libraries and defines local tools:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mikelove/DESeq2">DESeq2</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/GenomicAlignments">GenomicAlignments</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">hg38.HomoSapiens.Gencode.v35</span><span class="op">)</span></span>
@@ -110,7 +110,7 @@
 <span class="header-section-number">4.1</span> Define genomic features<a class="anchor" aria-label="anchor" href="#define-genomic-features"><i class="fas fa-link"></i></a>
 </h2>
 <p>Code chunk below defines the annotated transcript-based genomic features of 5’UTR, 13 nts up/downstream from translation start sites, first exons, and 3’ UTR; all features are kept unique.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#</span></span>
 <span><span class="co"># define features</span></span>
 <span><span class="co">#</span></span>
@@ -164,7 +164,7 @@
 <span class="header-section-number">4.2</span> Get p-sites coordinates<a class="anchor" aria-label="anchor" href="#get-p-sites-coordinates"><i class="fas fa-link"></i></a>
 </h2>
 <p>Here we kept the footprints with dominant lengths 26 to 29 and used the previously-defined offset 13 to get the p-sites coordinates of the ribosome footprints, using <code>ribosomeProfilingQC::getPsiteCoordinates()</code>.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ignore.strand</span> <span class="op">&lt;-</span> <span class="cn">FALSE</span></span>
 <span><span class="va">yieldSize</span> <span class="op">&lt;-</span> <span class="fl">1e+07</span></span>
 <span><span class="va">best_p_site</span> <span class="op">&lt;-</span> <span class="fl">13</span></span>
@@ -186,7 +186,7 @@
 <span class="header-section-number">4.2.1</span> Profiling on CDS<a class="anchor" aria-label="anchor" href="#profiling-on-cds"><i class="fas fa-link"></i></a>
 </h3>
 <p>Use <code><a href="https://rdrr.io/pkg/GenomicAlignments/man/summarizeOverlaps-methods.html">GenomicAlignments::summarizeOverlaps()</a></code> to count p-sites on CDS and save as <code>DESeqDataSet</code> with size factor estimated by <em>DESeq2</em>. This size factor will also be used to normalize the counts on other transcript-based genomic features.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># profiling</span></span>
 <span><span class="va">rse_cds_by_gene</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/bplapply.html">bplapply</a></span><span class="op">(</span><span class="va">reads</span>, <span class="kw">function</span><span class="op">(</span><span class="va">pc</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/GenomicAlignments/man/summarizeOverlaps-methods.html">summarizeOverlaps</a></span><span class="op">(</span>features<span class="op">=</span><span class="va">cds_by_gene</span>, </span>
@@ -217,7 +217,7 @@
 <span class="header-section-number">4.2.2</span> Profiling on other genomic features<a class="anchor" aria-label="anchor" href="#profiling-on-other-genomic-features"><i class="fas fa-link"></i></a>
 </h3>
 <p>Profiling near translation start site [-13, 13]:</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/load.html">load</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">pkg_dir</span>, <span class="st">"data"</span>, <span class="st">"p_sites.rda"</span><span class="op">)</span><span class="op">)</span> <span class="co"># same as "reads" made previously</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/load.html">load</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">pkg_dir</span>, <span class="st">"data"</span>, <span class="st">"dds_cds_by_gene.rda"</span><span class="op">)</span><span class="op">)</span> <span class="co"># need the sizeFactor and column data</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/load.html">load</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">pkg_dir</span>, <span class="st">"data"</span>, <span class="st">"tx_based_features.rda"</span><span class="op">)</span><span class="op">)</span> <span class="co"># 5'UTR/TSS/1stExon/3'UTR</span></span>
@@ -239,7 +239,7 @@
 <span><span class="va">rse_TSS_by_tx</span> <span class="op">&lt;-</span> <span class="fu">.get_col_row_data</span><span class="op">(</span><span class="va">rse_TSS_by_tx</span>, dds_cds_by_gene<span class="op">=</span><span class="va">dds_cds_by_gene</span>, txdb<span class="op">=</span><span class="va">txdb</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/save.html">save</a></span><span class="op">(</span><span class="va">rse_TSS_by_tx</span>, file<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">pkg_dir</span>, <span class="st">"data"</span>, <span class="st">"rse_TSS_by_tx.rda"</span><span class="op">)</span><span class="op">)</span> </span></code></pre></div>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># profile 5' UTR</span></span>
 <span><span class="va">rse_5UTR_by_tx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/bplapply.html">bplapply</a></span><span class="op">(</span><span class="va">p_sites</span>, <span class="kw">function</span><span class="op">(</span><span class="va">pc</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/GenomicAlignments/man/summarizeOverlaps-methods.html">summarizeOverlaps</a></span><span class="op">(</span>features<span class="op">=</span><span class="va">feature_5p</span>, </span>
@@ -251,7 +251,7 @@
 <span><span class="va">rse_5UTR_by_tx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/do.call.html">do.call</a></span><span class="op">(</span><span class="va">cbind</span>, <span class="va">rse_5UTR_by_tx</span><span class="op">)</span></span>
 <span><span class="va">rse_5UTR_by_tx</span> <span class="op">&lt;-</span> <span class="fu">.get_col_row_data</span><span class="op">(</span><span class="va">rse_5UTR_by_tx</span>, dds_cds_by_gene<span class="op">=</span><span class="va">dds_cds_by_gene</span>, txdb<span class="op">=</span><span class="va">txdb</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/save.html">save</a></span><span class="op">(</span><span class="va">rse_5UTR_by_tx</span>, file<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">pkg_dir</span>, <span class="st">"data"</span>, <span class="st">"rse_5UTR_by_tx.rda"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># profile on 1st exon</span></span>
 <span><span class="va">rse_1st_exon_by_tx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/bplapply.html">bplapply</a></span><span class="op">(</span><span class="va">p_sites</span>, <span class="kw">function</span><span class="op">(</span><span class="va">pc</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/pkg/GenomicAlignments/man/summarizeOverlaps-methods.html">summarizeOverlaps</a></span><span class="op">(</span>features<span class="op">=</span><span class="va">first_exon</span>, </span>
@@ -262,7 +262,7 @@
 <span><span class="va">rse_1st_exon_by_tx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/do.call.html">do.call</a></span><span class="op">(</span><span class="va">cbind</span>, <span class="va">rse_1st_exon_by_tx</span><span class="op">)</span></span>
 <span><span class="va">rse_1st_exon_by_tx</span> <span class="op">&lt;-</span> <span class="fu">.get_col_row_data</span><span class="op">(</span>rse<span class="op">=</span><span class="va">rse_1st_exon_by_tx</span>, dds_cds_by_gene<span class="op">=</span><span class="va">dds_cds_by_gene</span>, txdb<span class="op">=</span><span class="va">txdb</span><span class="op">)</span>      </span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/save.html">save</a></span><span class="op">(</span><span class="va">rse_1st_exon_by_tx</span>, file<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">pkg_dir</span>, <span class="st">"data"</span>, <span class="st">"rse_1st_exon_by_tx.rda"</span><span class="op">)</span><span class="op">)</span> </span></code></pre></div>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># profile by 3UTR</span></span>
 <span><span class="va">rse_3UTR_by_tx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/bplapply.html">bplapply</a></span><span class="op">(</span><span class="va">p_sites</span>, <span class="kw">function</span><span class="op">(</span><span class="va">pc</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/GenomicAlignments/man/summarizeOverlaps-methods.html">summarizeOverlaps</a></span><span class="op">(</span>features<span class="op">=</span><span class="va">feature_3p</span>, </span>
@@ -309,7 +309,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>DUX4 ribosome footprints profiling and translation efficiency</strong>" was written by Chao-Jen Wong. It was last built on 2023-04-07.</p>
+    <p>"<strong>DUX4 ribosome footprints profiling and translation efficiency</strong>" was written by Chao-Jen Wong. It was last built on 2023-04-08.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

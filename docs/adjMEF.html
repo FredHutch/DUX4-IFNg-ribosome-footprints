@@ -4,17 +4,17 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Chapter 7 Free energy | DUX4 ribosome footprints profiling and translation efficiency</title>
+<title>Chapter 7 5’ UTR Free Energy Evaluation | DUX4 ribosome footprints profiling and translation efficiency</title>
 <meta name="author" content="Chao-Jen Wong">
-<meta name="description" content="We have five collections of 5’UTR and use the ShortRead, BioStrings and BSgenome.Hsapiens.UCSC.hg38 packages to get the squences. All annotated 5’ UTR (79,176): transcript-based and unique 5’ UTR...">
+<meta name="description" content="To obtain the 5’ UTR sequences and their corresponding minimal free energy (MEF) values, we utilized the ShortRead, BioStrings, and BSgenome.Hsapiens.UCSC.hg38 Bioconductor packages, along with...">
 <meta name="generator" content="bookdown 0.32 with bs4_book()">
-<meta property="og:title" content="Chapter 7 Free energy | DUX4 ribosome footprints profiling and translation efficiency">
+<meta property="og:title" content="Chapter 7 5’ UTR Free Energy Evaluation | DUX4 ribosome footprints profiling and translation efficiency">
 <meta property="og:type" content="book">
 <meta property="og:url" content="https://FredHutch.github.io/DUX4-IFNg-ribosome-footprints/adjMEF.html">
-<meta property="og:description" content="We have five collections of 5’UTR and use the ShortRead, BioStrings and BSgenome.Hsapiens.UCSC.hg38 packages to get the squences. All annotated 5’ UTR (79,176): transcript-based and unique 5’ UTR...">
+<meta property="og:description" content="To obtain the 5’ UTR sequences and their corresponding minimal free energy (MEF) values, we utilized the ShortRead, BioStrings, and BSgenome.Hsapiens.UCSC.hg38 Bioconductor packages, along with...">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Chapter 7 Free energy | DUX4 ribosome footprints profiling and translation efficiency">
-<meta name="twitter:description" content="We have five collections of 5’UTR and use the ShortRead, BioStrings and BSgenome.Hsapiens.UCSC.hg38 packages to get the squences. All annotated 5’ UTR (79,176): transcript-based and unique 5’ UTR...">
+<meta name="twitter:title" content="Chapter 7 5’ UTR Free Energy Evaluation | DUX4 ribosome footprints profiling and translation efficiency">
+<meta name="twitter:description" content="To obtain the 5’ UTR sequences and their corresponding minimal free energy (MEF) values, we utilized the ShortRead, BioStrings, and BSgenome.Hsapiens.UCSC.hg38 Bioconductor packages, along with...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Sen-0.4.5/font.css" rel="stylesheet">
@@ -53,7 +53,7 @@
 <li><a class="" href="profiling.html"><span class="header-section-number">4</span> P-sites profiling on genomic features</a></li>
 <li><a class="" href="mRNA.html"><span class="header-section-number">5</span> mRNA profiling and DUX4/IFNg induced genes</a></li>
 <li><a class="" href="translation-efficiency-CDS.html"><span class="header-section-number">6</span> Translation efficiency changes in CDS</a></li>
-<li><a class="active" href="adjMEF.html"><span class="header-section-number">7</span> Free energy</a></li>
+<li><a class="active" href="adjMEF.html"><span class="header-section-number">7</span> 5’ UTR Free Energy Evaluation</a></li>
 <li><a class="" href="references.html">References</a></li>
 </ul>
 
@@ -64,18 +64,24 @@
 </div>
   </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="adjMEF" class="section level1" number="7">
 <h1>
-<span class="header-section-number">7</span> Free energy<a class="anchor" aria-label="anchor" href="#adjMEF"><i class="fas fa-link"></i></a>
+<span class="header-section-number">7</span> 5’ UTR Free Energy Evaluation<a class="anchor" aria-label="anchor" href="#adjMEF"><i class="fas fa-link"></i></a>
 </h1>
-<p>We have five collections of 5’UTR and use the <code>ShortRead</code>, <code>BioStrings</code> and <code>BSgenome.Hsapiens.UCSC.hg38</code> packages to get the squences.</p>
+<p>To obtain the 5’ UTR sequences and their corresponding minimal free energy (MEF) values, we utilized the <code>ShortRead</code>, <code>BioStrings</code>, and <code>BSgenome.Hsapiens.UCSC.hg38</code> Bioconductor packages, along with the <code>Vienna</code> software. The 5’ UTR models were based on transcripts, but since there could be multiple isoforms with the same 5’ UTR model, we ensured uniqueness by retaining only one instance of each.</p>
+<p>In this study, we calculated the free energy for five sets of 5’ UTR features, as follows:</p>
 <ol style="list-style-type: decimal">
-<li>All annotated 5’ UTR (79,176): transcript-based and unique 5’ UTR model from Gencode v35</li>
-<li>DUX4 targets: 88 targets identified from Polysome-seq, and the 5’UTR include annotated and un-annotated identified by the <code>SESeq</code> packages; <code>DUX4-targets-polysome-84</code> how did I get this? Hint: <code>110-HDUX4-promoter.R</code> checked if the candidate has alternative splice events, alternative first exon (AFE) or alternative start site (AS). Some genes use alernative start site / first exon, but some dont’. <code>DUX4-targets-novel-and-annotated-5'UTR.xlsx</code>.</li>
-<li>
-<li>Down-regulated translational efficiency by Ribo-seq (S6) in 5’UTR region: <code>TE down Ribo-seq</code>
-</li>
-<li>TE list from poly-seq: <code>TE dwon Poly-seq</code>, total 5,800 genes; high/sub</li>
+<li><p><strong>All annotated 5’ UTR</strong>: This set included transcript-based and unique 5’ UTR models extracted from Gencode v3.5, comprising a total of 19,570 genes.</p></li>
+<li><p><strong>DUX4 direct targets</strong>: We identified 84 DUX4 directed targets from Polysome-seq data, many of which had alternative promoters identified by <a href="(https://www.nature.com/articles/ng.3846)">Whiddon 2017</a>. These targets were listed in <code>../extdata/DUX4-targets-novel-and-annotated-5'UTR.xlsx</code>. We also checked for alternative splice events, alternative first exon (AFE), or alternative start site (AS) using <code>../scripts/110-HDUX4-promoter.R</code>.</p></li>
+<li><p><strong>TE down Ribo-seq</strong>: Down-regulated translational efficiency by Ribo-seq (S6) in 5’UTR region: We identified 1,131 candidates with reduced translational efficiency in the 5’UTR region based on Ribo-seq data.</p></li>
+<li><p><strong>Poly-seq up-regulated</strong>: We identified 239 non-DUX4-induced candidates that were up-regulated in DUX4-treatment in Poly-seq samples (High/High).</p></li>
+<li><p><strong>Poly-seq down-regulated</strong>: We identified 5,800 candidates that were down-regulated in Poly-seq samples in the High vs. Sub comparison.</p></li>
 </ol>
-<p>The plan to calculate the free energy of the five collections of 5’UTR is implemented by <code>09B-5UTR-structure.R</code>.</p>
+<p>The plan of calculating the the five collections of 5’UTR is implemented by <code>09B-5UTR-structure.R</code>.</p>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:add-5UTR"></span>
+<img src="images/boxplot-AdjMEF-5UTR.png" alt="5' UTR minimal free energy per 100 nucleotides" width="675"><p class="caption">
+Figure 7.1: 5’ UTR minimal free energy per 100 nucleotides
+</p>
+</div>
 
 </div>
   <div class="chapter-nav">
@@ -83,7 +89,7 @@
 <div class="next"><a href="references.html">References</a></div>
 </div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
-      <ul class="nav navbar-nav"><li><a class="nav-link" href="#adjMEF"><span class="header-section-number">7</span> Free energy</a></li></ul>
+      <ul class="nav navbar-nav"><li><a class="nav-link" href="#adjMEF"><span class="header-section-number">7</span> 5’ UTR Free Energy Evaluation</a></li></ul>
 
       <div class="book-extra">
         <ul class="list-unstyled">
@@ -100,7 +106,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>DUX4 ribosome footprints profiling and translation efficiency</strong>" was written by Chao-Jen Wong. It was last built on 2023-04-07.</p>
+    <p>"<strong>DUX4 ribosome footprints profiling and translation efficiency</strong>" was written by Chao-Jen Wong. It was last built on 2023-04-08.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

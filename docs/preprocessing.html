@@ -6,15 +6,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Chapter 2 Preprocessing Ribosome footprints sequencing data | DUX4 ribosome footprints profiling and translation efficiency</title>
 <meta name="author" content="Chao-Jen Wong">
-<meta name="description" content="Schema of preprocessing Ribo-seq data This script performs the preprocessing of our ribo-seq data. Below lists the sections of the shell script for each of the preprocessing steps: Software:...">
+<meta name="description" content="Figure 2.1: Flowchart of Ribo-seq data preprocessing  The script provided performs the preprocessing steps of our ribo-seq data. The following sections outline the preprocessing steps included in...">
 <meta name="generator" content="bookdown 0.32 with bs4_book()">
 <meta property="og:title" content="Chapter 2 Preprocessing Ribosome footprints sequencing data | DUX4 ribosome footprints profiling and translation efficiency">
 <meta property="og:type" content="book">
 <meta property="og:url" content="https://FredHutch.github.io/DUX4-IFNg-ribosome-footprints/preprocessing.html">
-<meta property="og:description" content="Schema of preprocessing Ribo-seq data This script performs the preprocessing of our ribo-seq data. Below lists the sections of the shell script for each of the preprocessing steps: Software:...">
+<meta property="og:description" content="Figure 2.1: Flowchart of Ribo-seq data preprocessing  The script provided performs the preprocessing steps of our ribo-seq data. The following sections outline the preprocessing steps included in...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Chapter 2 Preprocessing Ribosome footprints sequencing data | DUX4 ribosome footprints profiling and translation efficiency">
-<meta name="twitter:description" content="Schema of preprocessing Ribo-seq data This script performs the preprocessing of our ribo-seq data. Below lists the sections of the shell script for each of the preprocessing steps: Software:...">
+<meta name="twitter:description" content="Figure 2.1: Flowchart of Ribo-seq data preprocessing  The script provided performs the preprocessing steps of our ribo-seq data. The following sections outline the preprocessing steps included in...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Sen-0.4.5/font.css" rel="stylesheet">
@@ -53,7 +53,7 @@
 <li><a class="" href="profiling.html"><span class="header-section-number">4</span> P-sites profiling on genomic features</a></li>
 <li><a class="" href="mRNA.html"><span class="header-section-number">5</span> mRNA profiling and DUX4/IFNg induced genes</a></li>
 <li><a class="" href="translation-efficiency-CDS.html"><span class="header-section-number">6</span> Translation efficiency changes in CDS</a></li>
-<li><a class="" href="adjMEF.html"><span class="header-section-number">7</span> Free energy</a></li>
+<li><a class="" href="adjMEF.html"><span class="header-section-number">7</span> 5’ UTR Free Energy Evaluation</a></li>
 <li><a class="" href="references.html">References</a></li>
 </ul>
 
@@ -66,9 +66,13 @@
 <h1>
 <span class="header-section-number">2</span> Preprocessing Ribosome footprints sequencing data<a class="anchor" aria-label="anchor" href="#preprocessing"><i class="fas fa-link"></i></a>
 </h1>
-<div class="inline-figure">
-<img src="images/ribo-preprocessing.excalidraw.png" class="cover" width="450" height="500/">Schema of preprocessing Ribo-seq data</div>
-<p>This <a href="https://github.com/FredHutch/DUX4-IFNg-ribosome-footprints/scripts/000-preprocessing_R1.sh">script</a> performs the preprocessing of our ribo-seq data. Below lists the sections of the shell script for each of the preprocessing steps:</p>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:flowchart-preprocessing"></span>
+<img src="images/ribo-preprocessing.excalidraw.png" alt="Flowchart of Ribo-seq data preprocessing" width="450 px"><p class="caption">
+Figure 2.1: Flowchart of Ribo-seq data preprocessing
+</p>
+</div>
+<p>The <a href="https://github.com/FredHutch/DUX4-IFNg-ribosome-footprints/scripts/000-preprocessing_R1.sh">script</a> provided performs the preprocessing steps of our ribo-seq data. The following sections outline the preprocessing steps included in the shell script.</p>
 <p><strong>Software</strong>:</p>
 <ul>
 <li>FastQC/0.11.9-Java-11</li>
@@ -157,7 +161,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>DUX4 ribosome footprints profiling and translation efficiency</strong>" was written by Chao-Jen Wong. It was last built on 2023-04-07.</p>
+    <p>"<strong>DUX4 ribosome footprints profiling and translation efficiency</strong>" was written by Chao-Jen Wong. It was last built on 2023-04-08.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
