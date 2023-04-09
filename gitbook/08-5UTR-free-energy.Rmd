@@ -1,6 +1,6 @@
-# Free energy of 5 prime UTR  {#adjMEF}
+# 5' UTR Free Energy Evaluation  {#adjMEF}
 
-To obtain the 5' UTR sequences and their corresponding free energy values, we utilized the `ShortRead`, `BioStrings`, and `BSgenome.Hsapiens.UCSC.hg38` Bioconductor packages, along with the `Vienna` software. The 5' UTR models were based on transcripts, but since there could be multiple isoforms with the same 5' UTR model, we ensured uniqueness by retaining only one instance of each.
+To obtain the 5' UTR sequences and their corresponding minimal free energy (MEF) values, we utilized the `ShortRead`, `BioStrings`, and `BSgenome.Hsapiens.UCSC.hg38` Bioconductor packages, along with the `Vienna` software. The 5' UTR models were based on transcripts, but since there could be multiple isoforms with the same 5' UTR model, we ensured uniqueness by retaining only one instance of each.
 
 
 In this study, we calculated the free energy for five sets of 5' UTR features, as follows:
@@ -15,3 +15,9 @@ In this study, we calculated the free energy for five sets of 5' UTR features, a
 
 
 The plan of calculating the  the five collections of 5'UTR is implemented by `09B-5UTR-structure.R`. 
+
+
+```{r add-5UTR, include=TRUE, fig.align="center", fig.cap=c("5' UTR minimal free energy per 100 nucleotides"), echo=FALSE}
+knitr::include_graphics(path="./images/boxplot-AdjMEF-5UTR.png")
+```
+

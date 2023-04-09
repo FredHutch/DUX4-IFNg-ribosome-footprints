@@ -1,8 +1,11 @@
 # Preprocessing Ribosome footprints sequencing data {#preprocessing}
 
-<img src="images/ribo-preprocessing.excalidraw.png" class="cover" width=450 height=500/>Schema of preprocessing Ribo-seq data
+<div class="figure" style="text-align: center">
+<img src="./images/ribo-preprocessing.excalidraw.png" alt="Flowchart of Ribo-seq data preprocessing" width="450 px" />
+<p class="caption">(\#fig:flowchart-preprocessing)Flowchart of Ribo-seq data preprocessing</p>
+</div>
 
-This [script](https://github.com/FredHutch/DUX4-IFNg-ribosome-footprints/scripts/000-preprocessing_R1.sh) performs the preprocessing of our ribo-seq data. Below lists the sections of the shell script for each of the preprocessing steps:
+The [script](https://github.com/FredHutch/DUX4-IFNg-ribosome-footprints/scripts/000-preprocessing_R1.sh) provided performs the preprocessing steps of our ribo-seq data. The following sections outline the preprocessing steps included in the shell script.
 
 **Software**: 
 

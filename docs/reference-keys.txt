@@ -1,3 +1,4 @@
+fig:flowchart-preprocessing
 fig:include-size-length
 fig:distant-to-start-codon
 fig:reading-frame-tss
@@ -6,6 +7,7 @@ fig:meta-gene-coverage
 eq:te
 fig:tidy-and-viz-S6-results
 tab:goseq-S6
+fig:add-5UTR
 about
 samples-and-treatments
 softwear-requirement

@@ -1,7 +1,7 @@
 --- 
 title: "DUX4 ribosome footprints profiling and translation efficiency"
 author: "Chao-Jen Wong"
-date: "2023-04-07"
+date: "2023-04-08"
 site: bookdown::bookdown_site
 documentclass: book
 bibliography: [book.bib, packages.bib]
