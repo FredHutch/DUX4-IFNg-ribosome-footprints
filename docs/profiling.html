@@ -66,7 +66,7 @@
 <h1>
 <span class="header-section-number">4</span> P-sites profiling on genomic features<a class="anchor" aria-label="anchor" href="#profiling"><i class="fas fa-link"></i></a>
 </h1>
-<p>In this chapter, we used <code>ribosomeProfilingQC::getPsiteCoordinates()</code> to get p-sites coordinates. Due to its large size, the <code>p-sites</code> dataset is not included in the repo. However, we do include the p-sites profiling on gene-based CDS and transcripts-based genomic features such as 5’ UTR, 13 nts up/downstream from translation start site, 1st exon, and 3’ UTR, saved as <code>DESeqDatSet</code> instances.</p>
+<p>In this chapter, we used <code>ribosomeProfilingQC::getPsiteCoordinates()</code> to get p-sites coordinates. Due to its large size, the <code>p-sites</code> dataset is not included in the repo. However, we do include the p-sites profiling on gene-based CDS and transcript-based genomic features such as 5’ UTR, 13 nts up/downstream from translation start site, first coding exon, and 3’ UTR, saved as <code>DESeqDatSet</code> instances.</p>
 <p>Code chunk below loads libraries and defines local tools:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mikelove/DESeq2">DESeq2</a></span><span class="op">)</span></span>
@@ -109,7 +109,7 @@
 <h2>
 <span class="header-section-number">4.1</span> Define genomic features<a class="anchor" aria-label="anchor" href="#define-genomic-features"><i class="fas fa-link"></i></a>
 </h2>
-<p>Code chunk below defines the annotated transcript-based genomic features of 5’UTR, 13 nts up/downstream from translation start sites, first exons, and 3’ UTR; all features are kept unique.</p>
+<p>The code chunk presented below defines the annotated transcript-based genomic features, including the 5’ UTR, 13 nucleotides up/downstream from translation start sites, first coding exons, and 3’ UTR. To prevent duplication resulting from isoforms sharing the same 5’ UTR, exons, and 3’ UTR, we retained only unique features. As a result, we obtained a list of <code>GRanges</code> instances (named <code>tx_based_features</code>) represent the coordinates of these genomic features. We didn’t include this object in our repository.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#</span></span>
 <span><span class="co"># define features</span></span>
@@ -163,7 +163,7 @@
 <h2>
 <span class="header-section-number">4.2</span> Get p-sites coordinates<a class="anchor" aria-label="anchor" href="#get-p-sites-coordinates"><i class="fas fa-link"></i></a>
 </h2>
-<p>Here we kept the footprints with dominant lengths 26 to 29 and used the previously-defined offset 13 to get the p-sites coordinates of the ribosome footprints, using <code>ribosomeProfilingQC::getPsiteCoordinates()</code>.</p>
+<p>Here we focused on the footprints with dominant lengths 26 to 29 and obtained their p-site coordinates using the offset of 13 nucleotides, as previously defined. To accomplish this, we employed the <code>ribosomeProfilingQC::getPsiteCoordinates()</code> function. While we did not store the resulting p_sites object in the repository, we did include the p-site profiling in the genomic features of interest.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ignore.strand</span> <span class="op">&lt;-</span> <span class="cn">FALSE</span></span>
 <span><span class="va">yieldSize</span> <span class="op">&lt;-</span> <span class="fl">1e+07</span></span>
@@ -203,7 +203,7 @@
 <span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html">rowData</a></span><span class="op">(</span><span class="va">rse_cds_by_gene</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">gene.anno</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html">rownames</a></span><span class="op">(</span><span class="va">rse_cds_by_gene</span><span class="op">)</span>, </span>
 <span>                                      <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"gene_id"</span>, <span class="st">"gene_type"</span>,</span>
 <span>                                        <span class="st">"gene_name"</span>, <span class="st">"hgnc_id"</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="co"># dds</span></span>
+<span><span class="co"># dds with loose filtering with row sum &gt; 12</span></span>
 <span><span class="va">dds_cds_by_gene</span> <span class="op">&lt;-</span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/DESeq2/man/DESeqDataSet.html">DESeqDataSet</a></span><span class="op">(</span><span class="va">rse_cds_by_gene</span>, design <span class="op">=</span> <span class="op">~</span><span class="va">treatment</span><span class="op">)</span> <span class="co"># loose filtering             </span></span>
 <span><span class="va">dds_cds_by_gene</span> <span class="op">&lt;-</span> </span>
@@ -309,7 +309,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>DUX4 ribosome footprints profiling and translation efficiency</strong>" was written by Chao-Jen Wong. It was last built on 2023-04-08.</p>
+    <p>"<strong>DUX4 ribosome footprints profiling and translation efficiency</strong>" was written by Chao-Jen Wong. It was last built on 2023-04-09.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
