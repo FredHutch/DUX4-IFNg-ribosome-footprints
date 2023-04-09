@@ -204,6 +204,5 @@ knitr::include_graphics("images/frame_frequency_by_regions_average_over_treatmen
 ```
 ```{r meta-gene-coverage, fig.align='center', fig.cap='Meta-gene p-sites coverage', out.width='650px'}
 knitr::include_graphics("images/reading_frame_periodicity_by_treatment_norm.png")
-
 ```
 

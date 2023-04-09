@@ -1,6 +1,6 @@
 # P-sites profiling on genomic features {#profiling}
 
-In this chapter, we used `ribosomeProfilingQC::getPsiteCoordinates()` to get p-sites coordinates. Due to its large size, the `p-sites` dataset is not included in the repo. However, we do include the p-sites profiling on gene-based CDS and transcripts-based genomic features such as 5' UTR, 13 nts up/downstream from translation start site, 1st exon, and 3' UTR, saved as `DESeqDatSet` instances.
+In this chapter, we used `ribosomeProfilingQC::getPsiteCoordinates()` to get p-sites coordinates. Due to its large size, the `p-sites` dataset is not included in the repo. However, we do include the p-sites profiling on gene-based CDS and transcript-based genomic features such as 5' UTR, 13 nts up/downstream from translation start site, first coding exon, and 3' UTR, saved as `DESeqDatSet` instances.
 
 Code chunk below loads libraries and defines local tools:
 
@@ -44,7 +44,8 @@ ignore.strand <- FALSE
 ```
 
 ## Define genomic features
-Code chunk below defines the annotated transcript-based genomic features of 5'UTR, 13 nts up/downstream from translation start sites, first exons, and 3' UTR; all features are kept unique. 
+The code chunk presented below defines the annotated transcript-based genomic features, including the 5' UTR, 13 nucleotides up/downstream from translation start sites, first coding exons, and 3' UTR. To prevent duplication resulting from isoforms sharing the same 5' UTR, exons, and 3' UTR, we retained only unique features. As a result, we obtained a list of `GRanges` instances (named `tx_based_features`) represent the coordinates of these genomic features. We didn't include this object in our repository.
+
 
 ```r
 #
@@ -97,7 +98,7 @@ save(tx_based_features, file=file.path(pkg_dir, "data", "tx_based_features.rda")
 ```
 
 ## Get p-sites coordinates
-Here we kept the footprints with dominant lengths 26 to 29 and used the previously-defined offset 13 to get the p-sites coordinates of the ribosome footprints, using `ribosomeProfilingQC::getPsiteCoordinates()`.
+Here we focused on the footprints with dominant lengths 26 to 29 and obtained their p-site coordinates using the offset of 13 nucleotides, as previously defined. To accomplish this, we employed the `ribosomeProfilingQC::getPsiteCoordinates()` function. While we did not store the resulting p_sites object in the repository, we did include the p-site profiling in the genomic features of interest.
 
 
 ```r
@@ -140,7 +141,7 @@ colData(rse_cds_by_gene) <- append(colData(rse_cds_by_gene),
 rowData(rse_cds_by_gene) <- gene.anno[rownames(rse_cds_by_gene), 
                                       c("gene_id", "gene_type",
                                         "gene_name", "hgnc_id")]
-# dds
+# dds with loose filtering with row sum > 12
 dds_cds_by_gene <- 
   DESeqDataSet(rse_cds_by_gene, design = ~treatment) # loose filtering             
 dds_cds_by_gene <- 

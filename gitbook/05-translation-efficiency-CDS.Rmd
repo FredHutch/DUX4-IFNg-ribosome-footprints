@@ -1,5 +1,6 @@
 # Translation efficiency changes in CDS {#translation-efficiency-CDS}
-With the ribosome footprint (ribo-seq) and mRNA (RNA-seq) profiling, we applied _DESeq2_ to calculate the translation efficiency changes between two treatment groups. The contrast model were the log differences between two groups in Ribo-seq and in RNA-seq, and the null hypothesis was defined as 
+The ribosome footprint (ribo-seq) and mRNA (RNA-seq) profiling allowed to determine changes in translation efficiency between two treatment groups. We employed a contrast model that calculated the logarithmic differences of the ratios between two groups in Ribo-seq and RNA-seq, with the null hypothesis defined as:
+
 
 \begin{equation} 
   H_0: \Bigg| log\left(\frac{treatment 2}{treatment 1}\right)_{ribo-seq} - log\left(\frac{treatment 2}{treatment 1}\right)_{RNA-seq} \Bigg| = 0,
@@ -7,26 +8,30 @@ With the ribosome footprint (ribo-seq) and mRNA (RNA-seq) profiling, we applied 
 \end{equation} 
 where the treatment 2 and 1 groups could be DUX-pulse+$IFN_\gamma$ and $IFN_\gamma$, respectively, or DUX-pulse and untreated.
 
-In this chapter, we illustrate the steps and code performing the discovery of translation efficiency changes in CDS induced by DUX4 (e.g. DUX-pulse+$IFN_\gamma$ vs. $IFN_\gamma$. 
+In this chapter, we examined the effects of DUX4 on translation efficiency in CDS, specifically comparing DUX-pulse+$IFN_\gamma$ to $IFN_\gamma$. Here, we illustrate the steps and code used to discover any changes in translation efficiency.
 
 
 ## Steps
 
-1. Define genomic features: gene-based CDS; transcript-based features including 5' UTR, 13 nts up/downstream from translation start sites, first exons, and 3' UTR.   
-2. Non-specific filtering: 
-  - Exclude 92 histone1 (H1) and histone 2 (H2) variants and DUX4-and $IFN_\gamma$-induced genes (Chapter \@ref(mRNA))  
-  - loose base-mean filtering for both RNA-seq and ribo-seq  
-3. Pre-estimate size factor: if the library sizes of RNA-seq and ribo-seq are vastly different, we recommend to pre-estimate the size factor separately using DESeq2 and the p-site counts (ribo-seq) and gene counts (RNA-seq), particularly, on CDS, disregard which genomic features you are account for.   
-4. DESeq2: the threshold is set to adjusted $p$-value < 0.05 and $|logFC| > 1$
-5. GO term analysis for down-regulated translation changes
+To discover changes in translation efficiency induced by DUX4, we followed these steps:
 
-The flowchart below demonstrates the workflow and results:
+1. We defined genomic features that include gene-based CDS, as well as transcript-based features such as 5' UTR, 13 nts up/downstream from translation start sites, first coding exons, and 3' UTR. We then counted p-sites within these genomic features, as described in Chapter \@ref(profiling).
+2. Conducted non-specific filtering by excluding 92 histone1 (H1) and histone 2 (H2) variants, as well as DUX4- and $IFN_\gamma$-induced genes (as described in Chapter \@ref(mRNA)). We applied loose base-mean filtering to both RNA-seq and ribo-seq data.
+3. Pre-estimated size factor separately for RNA-seq and ribo-seq libraries using DESeq2 and p-site counts (ribo-seq) and gene counts (RNA-seq), irrespective of the genomic features.
+4. Applied loose base-mean non-specific filtering to avoid very low counts (noise)
+4. Performed hypothesis testing by applying the contrast model described above to DESeq2, using adjusted p-values < 0.05 and |logFC| > 1 as the thresholds for significant translation efficiency changes.
+5. Conducted GO term analysis for down-regulated translation changes.
 
-<img src="images/flowchart-translation-changes.png" class="cover" width=700 height=1400/>
+
+## Flowchart
+
+```{r meta-gene-coverage, fig.align='center', fig.cap='Flowchart to examine the translational efficiency changes induced by DUX4.', out.width='700px'}
+knitr::include_graphics("./images/flowchart-translation-changes.png")
+```
 
 
 ## Load libraries and define parameters
-Note that the main directory is named `pkg_dir`, and here, it is set to our local path. The following code chunks in the chapter are extracted from [here](https://github.com/FredHutch/DUX4-IFNg-ribosome-footprints//scripts/060-translation-changes.R).
+Note that the main directory is named `pkg_dir`, and we have set it to our local path. The code chunks in this chapter are extracted from [here](https://github.com/FredHutch/DUX4-IFNg-ribosome-footprints/scripts/060-translation-changes.R).
 
 ```{r setup-5, include=FALSE}
 knitr::opts_chunk$set(eval = TRUE, message=FALSE)
@@ -71,7 +76,7 @@ list_comp <- list(S1 = c("untreated", "DOX_pulse"),
                   S6 = c("IFNg", "DOX_pulse_IFNg" ))
 ```
 
-Loading data sets:
+Next, we loaded the data sets of ribosome footprints and mRNA profiling as we as the genes to be remove from the analysis of  translation efficiency changes.
 ```{r load-data-sets}
 #
 # load rse by genes
@@ -96,8 +101,8 @@ PSM <- as.data.frame(gene.anno) %>% dplyr::select(gene_name, gene_id) %>%
   dplyr::filter(gene_name %in% psm_name$Symbol)
 ```
 
-## DUX4+$IFN_\gamma$ vs. $IFN_\gamma$ in CDS
-The code chunks below performs the discovery of translation efficiency changes induced by DUX4 in CDS. 
+## DESeq2: DUX4+$IFN_\gamma$ vs. $IFN_\gamma$ in CDS
+The code chunks below perform _DESeq2_'s differential analysis using a designated contrast model (as mentioned above) to discover translation efficiency changes in DUX4+$IFN_\gamma$ relative $IFN_\gamma$ in CDS. 
 
 ```{r translation-changes-S6}
 # S6: use .comb_RNA_Ribo to combine mRNA and ribosome profilings and 
@@ -120,7 +125,7 @@ S6_ribo <- results(dds_S6,
                    alpha=0.05)
 ```
 
-Tidy the result and make a scatter plot for the log fold changes between DUX-pulse and $IFN_\gamma$ in ribo-seq and in RNA-seq.
+Next we tidied the result and made a scatter plot for the log fold changes between DUX-pulse and $IFN_\gamma$ in ribo-seq and in RNA-seq.
 ```{r tidy-and-viz-S6-results, fig.cap="Scatter plot of log fold changes between DUX-pulse and IFN in ribo-seq and in RNA-seq. Blue dots indicate down-regulated translation efficiency changes and red up-regulated.", fig.align='center'}
 # tidy the results and exclude DUX4-induced genes
 tidy_S6_v2 <- .tidy_res_ribo_over_rna(dds=dds_S6, 
@@ -143,9 +148,9 @@ ggplot(res, aes(x=rna_lfc, y=ribo_lfc)) +
   theme_bw() +
   annotate("text", x=label_x_pos, y=label_y_pos, label=paste0("Pearson = ", format(pearson, digit=2)),
            hjust = 0, vjust=1) +
-  annotate("text", x=label_x_pos, y=label_y_pos-0.4, label=msg_up, color="red", 
+  annotate("text", x=label_x_pos, y=label_y_pos-0.5, label=msg_up, color="red", 
            hjust = 0, vjust=1) +
-  annotate("text", x=label_x_pos, y=label_y_pos-0.8, label=msg_down, 
+  annotate("text", x=label_x_pos, y=label_y_pos-1, label=msg_down, 
            color="blue", hjust=0, vjust=1) +
   scale_color_manual(values=c("gray75", "red", "blue")) + 
   scale_shape_manual(values=c(19, 1)) +

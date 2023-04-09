@@ -39,7 +39,8 @@ profiling-transcroptome-for-transcript-based-genomic-features
 dux4-induced-genes
 translation-efficiency-CDS
 steps
+flowchart
 load-libraries-and-define-parameters
-dux4ifn_gamma-vs.-ifn_gamma-in-cds
+deseq2-dux4ifn_gamma-vs.-ifn_gamma-in-cds
 go-term-analysis
 adjMEF
