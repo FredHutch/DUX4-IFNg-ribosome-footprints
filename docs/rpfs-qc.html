@@ -6,15 +6,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Chapter 3 Ribosome footprints quality control | DUX4 ribosome footprints profiling and translation efficiency</title>
 <meta name="author" content="Chao-Jen Wong">
-<meta name="description" content="In this chapter, we assessed the quality of the ribosome footprints (RPFs) in several aspects by using Bioconductor’s ribosomeProfilingQC package and the in-hoouse ad-hoc functions. The aspects...">
+<meta name="description" content="In this chapter, we assessed the quality of the ribosome footprints (RPFs) using the Bioconductor’s ribosomeProfilingQC package and custom-built functions. Our assessment covered four key aspects:...">
 <meta name="generator" content="bookdown 0.32 with bs4_book()">
 <meta property="og:title" content="Chapter 3 Ribosome footprints quality control | DUX4 ribosome footprints profiling and translation efficiency">
 <meta property="og:type" content="book">
 <meta property="og:url" content="https://FredHutch.github.io/DUX4-IFNg-ribosome-footprints/rpfs-qc.html">
-<meta property="og:description" content="In this chapter, we assessed the quality of the ribosome footprints (RPFs) in several aspects by using Bioconductor’s ribosomeProfilingQC package and the in-hoouse ad-hoc functions. The aspects...">
+<meta property="og:description" content="In this chapter, we assessed the quality of the ribosome footprints (RPFs) using the Bioconductor’s ribosomeProfilingQC package and custom-built functions. Our assessment covered four key aspects:...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Chapter 3 Ribosome footprints quality control | DUX4 ribosome footprints profiling and translation efficiency">
-<meta name="twitter:description" content="In this chapter, we assessed the quality of the ribosome footprints (RPFs) in several aspects by using Bioconductor’s ribosomeProfilingQC package and the in-hoouse ad-hoc functions. The aspects...">
+<meta name="twitter:description" content="In this chapter, we assessed the quality of the ribosome footprints (RPFs) using the Bioconductor’s ribosomeProfilingQC package and custom-built functions. Our assessment covered four key aspects:...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Sen-0.4.5/font.css" rel="stylesheet">
@@ -66,20 +66,18 @@
 <h1>
 <span class="header-section-number">3</span> Ribosome footprints quality control<a class="anchor" aria-label="anchor" href="#rpfs-qc"><i class="fas fa-link"></i></a>
 </h1>
-<p>In this chapter, we assessed the quality of the ribosome footprints (RPFs) in several aspects by using Bioconductor’s <em>ribosomeProfilingQC</em> package and the in-hoouse ad-hoc functions. The aspects include:</p>
-<p>Our assessment included the following:</p>
+<p>In this chapter, we assessed the quality of the ribosome footprints (RPFs) using the Bioconductor’s <code>ribosomeProfilingQC</code> package and custom-built functions. Our assessment covered four key aspects:</p>
 <ol style="list-style-type: decimal">
 <li>
-<strong>RPF size</strong>: We calculated the size distribution of the RPFs to ensure that most of them aligned with the expected size of ribosomes (26-29 nt).</li>
+<strong>RPF size</strong>: calculating the distribution of the ribosome footprint fragments length to ensure that majority of the length aligned with the expected size of ribosomes (26-29 nt)</li>
 <li>
-<strong>Translation start site offset enrichment</strong>: We visualized the distance from the 5’ end of reads to the start codon to determine the optimal offset for p-sites.</li>
+<strong>Translation start site offset enrichment</strong>: determining the optimal offset for p-sites by computing the distance from the 5’ end of reads to the start codon</li>
 <li>
-<strong>P-sites and reading frames</strong>: After determining the optimal offset, we estimated the p-sites coordinates of RPFs with the dominant length (26-29 nt) and verified that p-sites were in-frame around the start codon.</li>
+<strong>P-sites and reading frames</strong>: verifying that p-sites were in-frame around the start codon</li>
 <li>
-<strong>Trinucleotide periodicity on transcripts</strong>: We generated a meta-gene p-sites coverage plot colored by reading frames to illustrate the trinucleotide footprint periodicity from the 5’ UTR, CDS, to the 3’ UTR.</li>
+<strong>Trinucleotide periodicity on transcripts</strong>: examining the trinucleotide periodicity across transcripts using meta-gene p-sites coverage plots</li>
 </ol>
-<p>Following our evaluation of RPF and p-site quality, we profiled PRFs by counting p-sites on various genomic features (Chapter <a href="profiling.html#profiling">4</a>). These features included the 5’ UTR, 13 nt up/down-stream from the translation start sits, first coding exons, CDS, and the 3’ UTR.</p>
-<p>The primary <a href="https://github.com/FredHutch/DUX4-IFNg-ribosome-footprints/scripts/020-use_riboProfilingQC.R">script</a> used for RPF QC can be found here. Please note that we have not included BAM files in our repository, and therefore the code chunks in this chapter that involve BAM files could not be evaluated. As a result, the figures in this section were pre-generated.</p>
+<p>After evaluating the quality of RPFs and p-sites, we performed a comprehensive profiling of p-sites on various genomic features (Chapter <a href="profiling.html#profiling">4</a>). These included the 5’ UTR, 13 nt up/down-stream from the translation start sites, first coding exons, CDS, and the 3’ UTR. The primary script used for RPF quality control is available at this <a href="https://github.com/FredHutch/DUX4-IFNg-ribosome-footprints/scripts/020-use_riboProfilingQC.R">link</a>. As we did not include the BAM files in our repository, which is required for the RPFs quality assessment, the figures and results presented here were pre-generated.</p>
 <div id="preparation" class="section level2" number="3.1">
 <h2>
 <span class="header-section-number">3.1</span> Preparation<a class="anchor" aria-label="anchor" href="#preparation"><i class="fas fa-link"></i></a>
@@ -320,7 +318,7 @@ Figure 3.5: Meta-gene p-sites coverage
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>DUX4 ribosome footprints profiling and translation efficiency</strong>" was written by Chao-Jen Wong. It was last built on 2023-04-09.</p>
+    <p>"<strong>DUX4 ribosome footprints profiling and translation efficiency</strong>" was written by Chao-Jen Wong. It was last built on 2023-04-10.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
