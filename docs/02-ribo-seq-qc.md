@@ -1,18 +1,15 @@
 # Ribosome footprints quality control {#rpfs-qc}
 
 
-In this chapter, we assessed the quality of the ribosome footprints (RPFs) in several aspects by using Bioconductor’s _ribosomeProfilingQC_ package and the in-hoouse ad-hoc functions. The aspects include:  
 
-Our assessment included the following:
+In this chapter, we assessed the quality of the ribosome footprints (RPFs) using the Bioconductor's `ribosomeProfilingQC` package and custom-built functions. Our assessment covered four key aspects: 
 
-1. __RPF size__: We calculated the size distribution of the RPFs to ensure that most of them aligned with the expected size of ribosomes (26-29 nt).
-2. __Translation start site offset enrichment__: We visualized the distance from the 5' end of reads to the start codon to determine the optimal offset for p-sites.
-3. __P-sites and reading frames__: After determining the optimal offset, we estimated the p-sites coordinates of RPFs with the dominant length (26-29 nt) and verified that p-sites were in-frame around the start codon.
-4. __Trinucleotide periodicity on transcripts__: We generated a meta-gene p-sites coverage plot colored by reading frames to illustrate the trinucleotide footprint periodicity from the 5' UTR, CDS, to the 3' UTR.
+1. __RPF size__: calculating the distribution of the ribosome footprint fragments length to ensure that majority of the length aligned with the expected size of ribosomes (26-29 nt)
+2. __Translation start site offset enrichment__: determining the optimal offset for p-sites by computing the distance from the 5' end of reads to the start codon
+3. __P-sites and reading frames__: verifying that p-sites were in-frame around the start codon
+4. __Trinucleotide periodicity on transcripts__: examining the trinucleotide periodicity across transcripts using meta-gene p-sites coverage plots
 
-Following our evaluation of RPF and p-site quality, we profiled PRFs by counting p-sites on various genomic features (Chapter \@ref(profiling)). These features included the 5' UTR, 13 nt up/down-stream from the translation start sits, first coding exons, CDS, and the 3' UTR.
-
-The primary [script](https://github.com/FredHutch/DUX4-IFNg-ribosome-footprints/scripts/020-use_riboProfilingQC.R) used for RPF QC can be found here. Please note that we have not included BAM files in our repository, and therefore the code chunks in this chapter that involve BAM files could not be evaluated. As a result, the figures in this section were pre-generated.
+After evaluating the quality of RPFs and p-sites, we performed a comprehensive profiling of p-sites on various genomic features (Chapter \@ref(profiling)). These included the 5' UTR, 13 nt up/down-stream from the translation start sites, first coding exons, CDS, and the 3' UTR. The primary script used for RPF quality control is available at this [link](https://github.com/FredHutch/DUX4-IFNg-ribosome-footprints/scripts/020-use_riboProfilingQC.R). As we did not include the BAM files in our repository, which is required for the RPFs quality assessment, the figures and results presented here were pre-generated.
 
 ## Preparation
 The code chunk below loads the libraries:
